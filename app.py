@@ -1,6 +1,11 @@
 """ Main application module """
 
+from flask_migrate import Migrate
+
 from config.server import application
+from api.models.database import db
+
+migrate = Migrate(application, db)
 
 
 @application.errorhandler(404)

@@ -48,9 +48,25 @@ pipenv install
 
 - Make a copy of the .env.sample file and rename it to .env and update the variables accordingly
 
+- Apply migrations
+
 ```
-FLASK_ENV = development
+flask db upgrade
 ```
+
+- Should you make changes to the database models, run migrations as follows
+
+  - Migrate database
+
+  ```
+  flask db migrate
+  ```
+
+  - Upgrade to the new structure
+
+  ```
+  flask db upgrade
+  ```
 
 ## Running
 

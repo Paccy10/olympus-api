@@ -15,6 +15,9 @@ flask-migrate = "*"
 flask-sqlalchemy = "*"
 marshmallow-sqlalchemy = "*"
 psycopg2-binary = "*"
+pytest = "*"
+pytest-flask = "*"
+pytest-cov = "*"
 
 [requires]
 python_version = "3.7"

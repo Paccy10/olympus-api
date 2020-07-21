@@ -6,6 +6,9 @@ verify_ssl = true
 [dev-packages]
 pylint = "*"
 autopep8 = "*"
+pytest = "*"
+pytest-flask = "*"
+pytest-cov = "*"
 
 [packages]
 python-dotenv = "*"
@@ -15,9 +18,6 @@ flask-migrate = "*"
 flask-sqlalchemy = "*"
 marshmallow-sqlalchemy = "*"
 psycopg2-binary = "*"
-pytest = "*"
-pytest-flask = "*"
-pytest-cov = "*"
 
 [requires]
 python_version = "3.7"

@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.com/Paccy10/olympus-api.svg?branch=master)](https://travis-ci.com/Paccy10/olympus-api) ![Code Climate coverage](https://img.shields.io/codeclimate/coverage/Paccy10/olympus-api) ![Code Climate maintainability](https://img.shields.io/codeclimate/maintainability-percentage/Paccy10/olympus-api) ![GitHub language count](https://img.shields.io/github/languages/count/Paccy10/olympus-api) ![GitHub Pipenv locked dependency version](https://img.shields.io/github/pipenv/locked/dependency-version/Paccy10/olympus-api/flask)
+
 # Olympus App API
 
 A vacation rental online marketplace app API.

@@ -1,0 +1,25 @@
+language: python
+python:
+  - '3.7'
+env:
+  global:
+    - CC_TEST_REPORTER_ID=ba0fd7c704efce6340ca08b72f2d816d8a081c27b8324159c0b8b4dca408d033
+install:
+  - pip install -r requirements.txt
+  - pip install coverage
+
+services:
+  - postgresql
+
+before_script:
+  - psql -c 'create database olympus_test_db;' -U postgres
+  - curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
+  - chmod +x ./cc-test-reporter
+  - ./cc-test-reporter before-build
+
+script:
+  - pytest
+
+after_success:
+  - coverage xml
+  - ./cc-test-reporter after-build --exit-code $TRAVIS_TEST_RESULT

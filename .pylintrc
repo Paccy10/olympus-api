@@ -1,2 +1,2 @@
 [MESSAGES CONTROL]
-disable = no-member,unused-argument
+disable = no-member,unused-argument, unused-import

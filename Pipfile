@@ -18,6 +18,7 @@ flask-migrate = "*"
 flask-sqlalchemy = "*"
 marshmallow-sqlalchemy = "*"
 psycopg2-binary = "*"
+bcrypt = "*"
 
 [requires]
 python_version = "3.7"

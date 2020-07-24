@@ -2,6 +2,7 @@
 
 from flask import Flask, Blueprint
 from flask_restx import Api
+from flask_mail import Mail
 
 from .environment import AppConfig
 
@@ -26,7 +27,7 @@ api = Api(api_blueprint,
 def create_app(config=AppConfig):
     """ Create the flask application """
 
-    app = Flask(__name__)
+    app = Flask(__name__, template_folder='../templates')
     app.config.from_object(config)
     app.register_blueprint(api_blueprint)
 
@@ -34,3 +35,5 @@ def create_app(config=AppConfig):
 
 
 application = create_app()
+
+mail = Mail(application)

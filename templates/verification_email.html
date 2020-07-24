@@ -1,0 +1,18 @@
+{% extends 'layout.html' %} {% block content %}
+
+<p>
+  Hello {{ user.firstname }},<br /><br />
+  We’re excited you decided to join us. we’re here to help you make your
+  vacation very exciting. Please click the link below to activate your account
+</p>
+
+<a class="btn" style="color: #fff;" href="http://localhost:5000"
+  >Verify Account</a
+>
+
+<p>
+  <span style="display: block;">Thank you for choosing us,</span>
+  <span style="display: block;">The Olympus Team</span>
+</p>
+
+{% endblock %}

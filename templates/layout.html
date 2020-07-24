@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Open+Sans&display=swap"
+      rel="stylesheet"
+    />
+    <title>{{ title }}</title>
+    <style>
+      .email {
+        background-color: #f1f1f1;
+        margin: 20px;
+        padding: 20px;
+        font-size: 15px;
+        line-height: 1.5;
+        width: 500px;
+        margin: auto;
+        font-family: 'Open Sans', sans-serif;
+      }
+
+      .btn {
+        display: inline-block;
+        text-decoration: none;
+        margin: 10px 0;
+        background-color: #6675df;
+        padding: 10px;
+        color: #fff;
+      }
+      @media only screen and (max-width: 620px) {
+        .email {
+          width: 80%;
+          font-size: 13px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="email">
+      {% block content %} {% endblock %}
+    </div>
+  </body>
+</html>

@@ -9,3 +9,5 @@ WEAK_PASSWORD_MSG = 'Weak password. The password must be 8 characters long '\
                     'lower case letter and one number'
 TAKEN_EMAIL_MSG = 'The provided email already exists'
 TAKEN_USERNAME_MSG = 'The provided username already exists'
+INVALID_USER_TOKEN_MSG = 'The user verification token has expired'
+ALREADY_VERIFIED_MSG = 'User account already verified'

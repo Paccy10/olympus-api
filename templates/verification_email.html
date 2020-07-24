@@ -6,7 +6,10 @@
   vacation very exciting. Please click the link below to activate your account
 </p>
 
-<a class="btn" style="color: #fff;" href="http://localhost:5000"
+<a
+  class="btn"
+  style="color: #fff;"
+  href="{{ url_for('api_blueprint.Users_user_verify_resource', token=token, _external=True) }}"
   >Verify Account</a
 >
 

@@ -27,8 +27,8 @@ class User(BaseModel):
     def find_user(cls, identifier):
         """ Finds a User instance by email or username """
 
-        user = cls.query.filter(or_(and_(email=identifier, is_verified=True), and_(
-            username=identifier, is_verified=True))).first()
+        user = cls.query.filter(or_(and_(cls.email == identifier, cls.is_verified), and_(
+            cls.username == identifier, cls.is_verified))).first()
         if user:
             return user
         return None

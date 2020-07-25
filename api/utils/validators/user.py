@@ -82,8 +82,8 @@ class UserValidators:
             raise_conflict_error(errors)
 
     @classmethod
-    def validate(cls, data: dict):
-        """ Validates the user """
+    def validate_signup(cls, data: dict):
+        """ Validates the user registration """
 
         keys = ['firstname', 'lastname', 'email', 'username', 'password']
         errors = validate_request_body(data, keys)
@@ -94,3 +94,13 @@ class UserValidators:
         cls.validate_email(data.get('email'))
         cls.validate_password(data.get('password'))
         cls.validate_username(data.get('username'))
+
+    @classmethod
+    def validate_login(cls, data: dict):
+        """ Validates the user login """
+
+        keys = ['username', 'password']
+        errors = validate_request_body(data, keys)
+
+        if len(errors) > 0:
+            raise_bad_request_error(errors)

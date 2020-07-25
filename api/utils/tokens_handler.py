@@ -1,11 +1,14 @@
 """ Module for tokens handler """
 
 from os import getenv
+from datetime import datetime, timedelta
+import jwt
 from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
 from itsdangerous.exc import BadSignature
 from dotenv import load_dotenv
 
 from ..models.user import User
+from .helpers.constants import ENCODING
 
 load_dotenv()
 
@@ -22,7 +25,7 @@ def generate_user_token(user_id, expiration_time=1800):
     """
 
     serializer = Serializer(getenv('SECRET_KEY'), expiration_time)
-    token = serializer.dumps({'user_id': user_id}).decode('utf-8')
+    token = serializer.dumps({'user_id': user_id}).decode(ENCODING)
     return token
 
 
@@ -43,3 +46,25 @@ def verify_user_token(token):
         return None
 
     return User.find_by_id(user_id)
+
+
+def generate_auth_token(user_id: int):
+    """
+    Generates the authentication token
+    Args:
+        user_id(int): user id
+
+    Returns:
+        token(str): Json Web Token
+    """
+
+    payload = {
+        'iat': datetime.utcnow(),
+        'exp': datetime.utcnow() + timedelta(hours=1),
+        'user': {
+            'id': user_id
+        }
+    }
+
+    token = jwt.encode(payload, getenv('SECRET_KEY'), algorithm='HS256')
+    return token.decode(ENCODING)

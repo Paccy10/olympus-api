@@ -2,11 +2,15 @@
 
 import pytest
 from api.models.user import User
-from ..mocks.user import VALID_USER
+from api.utils.helpers.passwords_handler import hash_password
 
 
 @pytest.fixture(scope='module')
 def new_user(init_db):
     """ New user fixture """
 
-    return User(**VALID_USER)
+    return User(firstname='John',
+                lastname='Doe',
+                email='john.doe@app.com',
+                username='John',
+                password=hash_password('Password1234'))

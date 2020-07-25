@@ -48,3 +48,18 @@ INVALID_USER_WITH_EXISTED_USERNAME = {
     'username': 'John',
     'password': 'Password1234',
 }
+
+USER_WITH_CORRECT_CREDENTIALS = {
+    'username': 'John',
+    'password': 'Password1234'
+}
+
+USER_WITH_INCORRECT_USERNAME = {
+    'username': 'Kelly',
+    'password': 'Password1234'
+}
+
+USER_WITH_INCORRECT_PASSWORD = {
+    'username': 'John',
+    'password': 'Password'
+}

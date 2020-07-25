@@ -11,3 +11,8 @@ signup_model = user_namespace.model('Signup', {
     'username': fields.String(required=True, description='User username'),
     'password': fields.String(required=True, description='User password')
 })
+
+login_model = user_namespace.model('Login', {
+    'username': fields.String(required=True, description='User username or email'),
+    'password': fields.String(required=True, description='User password')
+})

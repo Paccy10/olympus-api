@@ -9,7 +9,7 @@ from ..utils.helpers.swagger.collections import user_namespace
 from ..utils.helpers.swagger.models.user import (signup_model,
                                                  login_model,
                                                  password_reset_model,
-                                                 Password_reset_request_model)
+                                                 password_reset_request_model)
 from ..utils.helpers.response import Response
 from ..utils.helpers.messages.success import (USER_CREATED,
                                               USER_VERIFIED,
@@ -31,8 +31,14 @@ from ..schemas.user import UserSchema
 @user_namespace.route('/signup')
 class UserSignupResource(Resource):
     """" Resource class for user signup endpoint """
+    responses = {
+        400: 'Validation Error',
+        409: 'Conflict Error',
+        201: 'Success'
+    }
 
-    @user_namespace.expect(signup_model)
+    @user_namespace.doc(body=signup_model,
+                        responses=responses)
     def post(self):
         """ Endpoint to create the user """
 
@@ -57,6 +63,12 @@ class UserSignupResource(Resource):
 class UserVerifyResource(Resource):
     """" Resource class for user verification endpoint """
 
+    responses = {
+        400: 'Validation Error',
+        200: 'Success'
+    }
+
+    @user_namespace.doc(responses=responses)
     def get(self, token):
         """ Endpoint to verify the user """
 
@@ -84,7 +96,13 @@ class UserVerifyResource(Resource):
 class UserLoginResource(Resource):
     """" Resource class for user login endpoint """
 
-    @user_namespace.expect(login_model)
+    responses = {
+        400: 'Validation Error',
+        404: 'User not found',
+        200: 'Success'
+    }
+
+    @user_namespace.doc(body=login_model, responses=responses)
     def post(self):
         """ Endpoint to login the user """
 
@@ -119,7 +137,13 @@ class UserLoginResource(Resource):
 class UserResetPasswordResource(Resource):
     """" Resource class for user password reset """
 
-    @user_namespace.expect(Password_reset_request_model)
+    responses = {
+        400: 'Validation Error',
+        404: 'User not found',
+        200: 'Success'
+    }
+
+    @user_namespace.doc(body=password_reset_request_model, responses=responses)
     def post(self):
         """ Endpoint to request password reset link """
 
@@ -142,7 +166,7 @@ class UserResetPasswordResource(Resource):
 
         return Response.success(PASSWORD_RESET_LINK_SENT, response_data, 200)
 
-    @user_namespace.expect(password_reset_model)
+    @user_namespace.doc(body=password_reset_model, responses=responses)
     def patch(self):
         """ Endpoint to rest user password """
 

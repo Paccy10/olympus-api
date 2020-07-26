@@ -1,5 +1,8 @@
 """ Module for user mocking data """
 
+from api.utils.tokens_handler import generate_user_token
+
+# Signup
 VALID_USER = {
     'firstname': 'John',
     'lastname': 'Doe',
@@ -49,6 +52,7 @@ INVALID_USER_WITH_EXISTED_USERNAME = {
     'password': 'Password1234',
 }
 
+# Login
 USER_WITH_CORRECT_CREDENTIALS = {
     'username': 'John',
     'password': 'Password1234'
@@ -62,4 +66,18 @@ USER_WITH_INCORRECT_USERNAME = {
 USER_WITH_INCORRECT_PASSWORD = {
     'username': 'John',
     'password': 'Password'
+}
+
+# Password Reset
+
+RESET_REQUEST_USER = {
+    'email': 'john.doe@app.com'
+}
+
+UNEXISTED_RESET_REQUEST_USER = {
+    'email': 'kelly.doe@gmail.com'
+}
+
+RESET_PASSWORD_USER = {
+    'password': 'Password@1234',
 }

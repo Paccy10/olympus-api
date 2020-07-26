@@ -6,11 +6,16 @@ from flask_restx import Resource
 from ..utils.helpers import request_data_strip
 from ..utils.helpers import get_error_body
 from ..utils.helpers.swagger.collections import user_namespace
-from ..utils.helpers.swagger.models.user import signup_model, login_model
+from ..utils.helpers.swagger.models.user import (signup_model,
+                                                 login_model,
+                                                 password_reset_model,
+                                                 Password_reset_request_model)
 from ..utils.helpers.response import Response
 from ..utils.helpers.messages.success import (USER_CREATED,
                                               USER_VERIFIED,
-                                              USER_LOGGED_IN)
+                                              USER_LOGGED_IN,
+                                              PASSWORD_RESET_LINK_SENT,
+                                              PASSWORD_UPDATED)
 from ..utils.helpers.messages.error import (INVALID_USER_TOKEN_MSG,
                                             ALREADY_VERIFIED_MSG,
                                             INVALID_CREDENTIALS,
@@ -44,6 +49,7 @@ class UserSignupResource(Resource):
             'user': user_data,
             'email_sent': email_sent
         }
+
         return Response.success(USER_CREATED, response_data, 201)
 
 
@@ -70,6 +76,7 @@ class UserVerifyResource(Resource):
         response_data = {
             'user': user_data
         }
+
         return Response.success(USER_VERIFIED, response_data, 200)
 
 
@@ -82,19 +89,20 @@ class UserLoginResource(Resource):
         """ Endpoint to login the user """
 
         request_data = request_data_strip(request.get_json())
-        UserValidators.validate_login(request_data)
+        UserValidators.validate_user_request_body(
+            request_data, ['username', 'password'])
         user = User.find_user(request_data['username'])
 
         if not user:
             return Response.error(
-                [get_error_body(request_data, USER_NOT_FOUND, '', '')], 404)
+                [get_error_body(None, USER_NOT_FOUND, '', 'body')], 404)
 
         user_schema = UserSchema()
         user_password = user_schema.dump(user)['password']
 
         if not check_password(request_data['password'], user_password):
             return Response.error(
-                [get_error_body(request_data, INVALID_CREDENTIALS, '', 'body')], 404)
+                [get_error_body(None, INVALID_CREDENTIALS, '', 'body')], 404)
 
         user_schema = UserSchema(exclude=['password'])
         logged_in_user = user_schema.dump(user)
@@ -103,4 +111,58 @@ class UserLoginResource(Resource):
             'token': token,
             'user': logged_in_user
         }
+
         return Response.success(USER_LOGGED_IN, response_data, 200)
+
+
+@user_namespace.route('/reset-password')
+class UserResetPasswordResource(Resource):
+    """" Resource class for user password reset """
+
+    @user_namespace.expect(Password_reset_request_model)
+    def post(self):
+        """ Endpoint to request password reset link """
+
+        request_data = request_data_strip(request.get_json())
+        UserValidators.validate_user_request_body(request_data, ['email'])
+        user = User.find_user(request_data['email'])
+
+        if not user:
+            return Response.error(
+                [get_error_body(None, USER_NOT_FOUND, '', '')], 404)
+
+        user_schema = UserSchema(exclude=['password'])
+        user_data = user_schema.dump(user)
+        email_sent = send_email(
+            user_data, 'Password Reset', 'password_reset_email.html')
+        response_data = {
+            'user': user_data,
+            'email_sent': email_sent
+        }
+
+        return Response.success(PASSWORD_RESET_LINK_SENT, response_data, 200)
+
+    @user_namespace.expect(password_reset_model)
+    def patch(self):
+        """ Endpoint to rest user password """
+
+        request_data = request_data_strip(request.get_json())
+        UserValidators.validate_password_reset(request_data)
+        token = request_data['token']
+        password = request_data['password']
+        user = verify_user_token(token)
+
+        if not user:
+            return Response.error(
+                [get_error_body(token, INVALID_USER_TOKEN_MSG, 'token', 'body')], 400)
+
+        password = hash_password(password)
+
+        user.update({'password': password})
+        user_schema = UserSchema(exclude=['password'])
+        user_data = user_schema.dump(user)
+        response_data = {
+            'user': user_data,
+        }
+
+        return Response.success(PASSWORD_UPDATED, response_data, 200)

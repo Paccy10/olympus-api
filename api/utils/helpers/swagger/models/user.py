@@ -16,3 +16,12 @@ login_model = user_namespace.model('Login', {
     'username': fields.String(required=True, description='User username or email'),
     'password': fields.String(required=True, description='User password')
 })
+
+Password_reset_request_model = user_namespace.model('Password Reset Request', {
+    'email': fields.String(required=True, description='User email')
+})
+
+password_reset_model = user_namespace.model('Password Reset', {
+    'token': fields.String(required=True, description='User given token'),
+    'password': fields.String(required=True, description='User new password')
+})

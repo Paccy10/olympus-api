@@ -32,3 +32,14 @@ def upload_image(file, folder):
         'public_id': result['public_id']
     }
     return image
+
+
+def destroy_image(public_id):
+    """
+    Destroy image from cloudinary
+    Args:
+        public_id(str): file public id
+
+    """
+
+    cloudinary.uploader.destroy(public_id)

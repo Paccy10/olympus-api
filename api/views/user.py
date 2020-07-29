@@ -28,7 +28,7 @@ from ..utils.helpers.passwords_handler import hash_password, check_password
 from ..utils.validators.user import UserValidators
 from ..utils.send_email import send_email
 from ..utils.tokens_handler import verify_user_token, generate_auth_token
-from ..utils.upload_image import upload_image
+from ..utils.upload_image import upload_image, destroy_image
 from ..models.user import User
 from ..schemas.user import UserSchema
 
@@ -105,19 +105,16 @@ class UserLoginResource(Resource):
             return Response.error(
                 [get_error_body(None, USER_NOT_FOUND, '', 'body')], 404)
 
-        user_schema = UserSchema()
-        user_password = user_schema.dump(user)['password']
-
-        if not check_password(request_data['password'], user_password):
+        if not check_password(request_data['password'], user.password):
             return Response.error(
                 [get_error_body(None, INVALID_CREDENTIALS, '', 'body')], 404)
 
         user_schema = UserSchema(exclude=['password'])
-        logged_in_user = user_schema.dump(user)
-        token = generate_auth_token(logged_in_user['id'])
+        user_data = user_schema.dump(user)
+        token = generate_auth_token(user_data['id'])
         response_data = {
             'token': token,
-            'user': logged_in_user
+            'user': user_data
         }
 
         return Response.success(USER_LOGGED_IN_MSG, response_data, 200)
@@ -193,6 +190,10 @@ class UserProfileResource(Resource):
 
         request_data = request_data_strip(request.form.to_dict())
         UserValidators.validate_profile_update(request_data, user_id)
+
+        if 'avatar' in request.files and user.avatar:
+            destroy_image(user.avatar['public_id'])
+
         avatar = upload_image(request.files['avatar'], 'olympus/users')
         request_data['avatar'] = avatar
         user.update(request_data)

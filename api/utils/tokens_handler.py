@@ -48,7 +48,7 @@ def verify_user_token(token):
     return User.find_by_id(user_id)
 
 
-def generate_auth_token(user_id: int, hours=1):
+def generate_auth_token(user_id: int, hours=24):
     """
     Generates the authentication token
     Args:

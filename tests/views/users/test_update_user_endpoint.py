@@ -13,7 +13,9 @@ from api.utils.helpers.messages.error import (INVALID_PHONE_MSG,
                                               NO_AUTH_TOKEN_MSG,
                                               NO_BEARER_IN_TOKEN_MSG,
                                               INVALID_AUTH_TOKEN_MSG,
-                                              EXPIRED_AUTH_TOKEN_MSG)
+                                              EXPIRED_AUTH_TOKEN_MSG,
+                                              KEY_REQUIRED_MSG,
+                                              NOT_IMAGE_EXT)
 from ...mocks.user import (PROFILE_USER,
                            PROFILE_USER_WITH_INVALID_PHONE,
                            PROFILE_USER_WITH_TAKEN_PHONE)
@@ -28,6 +30,26 @@ class TestUserProfileUpdate:
 
     def test_user_profile_update_succeeds(self, client, init_db, user_auth_header):
         """ Testing User profile update """
+
+        image = open(self.filename, 'rb')
+        img_string_io = BytesIO(image.read())
+
+        PROFILE_USER['avatar'] = (img_string_io, 'image.png')
+        response = client.put(f'{API_BASE_URL}/users/profile',
+                              content_type=FORM_CONTENT_TYPE,
+                              data=PROFILE_USER,
+                              headers=user_auth_header)
+        image.close()
+        assert response.status_code == 200
+        assert response.json['status'] == 'success'
+        assert response.json['message'] == PROFILE_UPDATED_MSG
+        assert response.json['data']['user']['phone_number'] == PROFILE_USER['phone_number']
+
+    def test_user_profile_update_with_avatar_update_succeeds(self,
+                                                             client,
+                                                             init_db,
+                                                             user_auth_header):
+        """ Testing User profile update with avatar update """
 
         image = open(self.filename, 'rb')
         img_string_io = BytesIO(image.read())
@@ -94,7 +116,7 @@ class TestUserProfileUpdate:
         assert response.json['errors'][0]['message'] == NO_BEARER_IN_TOKEN_MSG
 
     def test_user_profile_update_without_jwt_part_fails(self, client):
-        """ Testing User profile update without jwt part  """
+        """ Testing User profile update without jwt   """
 
         response = client.put(f'{API_BASE_URL}/users/profile',
                               data={},
@@ -130,3 +152,40 @@ class TestUserProfileUpdate:
         assert response.status_code == 401
         assert response.json['status'] == 'error'
         assert response.json['errors'][0]['message'] == EXPIRED_AUTH_TOKEN_MSG
+
+    def test_user_profile_update_with_empty_avatar_fails(self,
+                                                         client,
+                                                         init_db,
+                                                         user_auth_header):
+        """ Testing User profile update with empty avatar """
+
+        img_string_io = BytesIO()
+
+        PROFILE_USER['avatar'] = (img_string_io, '')
+        response = client.put(f'{API_BASE_URL}/users/profile',
+                              content_type=FORM_CONTENT_TYPE,
+                              data=PROFILE_USER,
+                              headers=user_auth_header)
+
+        assert response.status_code == 400
+        assert response.json['status'] == 'error'
+        assert response.json['errors'][0]['message'] == KEY_REQUIRED_MSG.format(
+            'avatar')
+
+    def test_user_profile_update_with_invalid_avatar_file_fails(self,
+                                                                client,
+                                                                init_db,
+                                                                user_auth_header):
+        """ Testing User profile update with invalid avatar file """
+
+        img_string_io = BytesIO()
+
+        PROFILE_USER['avatar'] = (img_string_io, 'image.txt')
+        response = client.put(f'{API_BASE_URL}/users/profile',
+                              content_type=FORM_CONTENT_TYPE,
+                              data=PROFILE_USER,
+                              headers=user_auth_header)
+
+        assert response.status_code == 400
+        assert response.json['status'] == 'error'
+        assert response.json['errors'][0]['message'] == NOT_IMAGE_EXT

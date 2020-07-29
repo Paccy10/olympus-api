@@ -9,47 +9,6 @@ from ..helpers.messages.error import (KEY_REQUIRED_MSG,
                                       NOT_IMAGE_EXT)
 
 
-def check_not_allowed_params(body, keys):
-    """
-    Checks body params that are not allowed
-
-    Args:
-        body (dict): request body
-        keys (list): list of keys that should be provided
-    Return:
-        (list): list of errors
-    """
-    errors = []
-
-    for prop, value in body.items():
-        if prop not in keys:
-            errors.append(get_error_body(
-                value, KEY_NOT_ALLOWED_MSG.format(prop), f'{prop}', 'body'))
-
-    return errors
-
-
-def validate_request_body(body, keys):
-    """
-    Validates request body keys and values
-
-    Args:
-        body (dict): request body
-        keys (list): list of keys that should be provided
-    Return:
-        (list): list of errors
-    """
-    errors = check_not_allowed_params(body, keys)
-
-    for key in keys:
-        param = body.get(key)
-        if not param or not param.strip():
-            errors.append(get_error_body(
-                param, KEY_REQUIRED_MSG.format(key), f'{key}', 'body'))
-
-    return errors
-
-
 def raise_bad_request_error(errors):
     """
     Raises bad request error
@@ -114,17 +73,58 @@ def validate_image(file):
         (ValidationError): raises an exception
     """
 
-    allowed_extensions = {'png', 'jpg', 'jpeg'}
-    if file not in request.files:
-        raise_bad_request_error(
-            [get_error_body(None, KEY_REQUIRED_MSG.format(file), file, 'body')])
+    extensions = {'png', 'jpg', 'jpeg'}
 
     filename = request.files[file].filename
+
     if filename == '':
         raise_bad_request_error(
             [get_error_body(None, KEY_REQUIRED_MSG.format(file), file, 'body')])
 
     extension = filename.rsplit('.', 1)[1].lower()
-    if '.' in filename and extension not in allowed_extensions:
+    if '.' in filename and extension not in extensions:
         raise_bad_request_error(
             [get_error_body(None, NOT_IMAGE_EXT, file, 'body')])
+
+
+def check_not_allowed_params(body, keys):
+    """
+    Checks body params that are not allowed
+
+    Args:
+        body (dict): request body
+        keys (list): list of keys that should be provided
+    Return:
+        (list): list of errors
+    """
+    errors = []
+
+    for prop, value in body.items():
+        if prop not in keys:
+            errors.append(get_error_body(
+                value, KEY_NOT_ALLOWED_MSG.format(prop), f'{prop}', 'body'))
+
+    if len(errors) > 0:
+        raise_bad_request_error(errors)
+
+
+def validate_request_body(body, keys):
+    """
+    Validates request body keys and values
+
+    Args:
+        body (dict): request body
+        keys (list): list of keys that should be provided
+    Return:
+        (list): list of errors
+    """
+    errors = []
+
+    for key in keys:
+        param = body.get(key)
+        if not param or not param.strip():
+            errors.append(get_error_body(
+                param, KEY_REQUIRED_MSG.format(key), f'{key}', 'body'))
+
+    if len(errors) > 0:
+        raise_bad_request_error(errors)

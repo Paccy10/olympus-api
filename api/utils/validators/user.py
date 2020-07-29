@@ -4,12 +4,16 @@ import re
 
 from . import (raise_bad_request_error,
                raise_conflict_error,
-               validate_request_body)
+               validate_request_body,
+               validate_image)
 from ..helpers import get_error_body
 from ..helpers.messages.error import (INVALID_EMAIL_MSG,
                                       WEAK_PASSWORD_MSG,
                                       TAKEN_EMAIL_MSG,
-                                      TAKEN_USERNAME_MSG)
+                                      TAKEN_USERNAME_MSG,
+                                      INVALID_PHONE_MSG,
+                                      TAKEN_PHONE_MSG,
+                                      KEY_REQUIRED_MSG)
 from ...models.user import User
 
 
@@ -109,3 +113,27 @@ class UserValidators:
 
         cls.validate_user_request_body(data, keys)
         cls.validate_password(data.get('password'))
+
+    @classmethod
+    def validate_profile_update(cls, data: dict, user_id):
+        """ Validates the user profile update """
+
+        keys = ['firstname', 'lastname', 'about', 'phone_number']
+
+        cls.validate_user_request_body(data, keys)
+
+        errors = []
+        phone_number = data.get('phone_number')
+        phone_regex = r"^(\+\d{1,2}\s?)?1?\-?\.?\s?\(?\d{3}\)?[\s.-]?\d{3}[\s.-]?\d{4}$"
+        if not re.match(phone_regex, phone_number.strip()):
+            errors.append(get_error_body(
+                phone_number, INVALID_PHONE_MSG, 'phone_number', 'body'))
+            raise_bad_request_error(errors)
+
+        user = User.query.filter(
+            User.phone_number == phone_number.strip()).first()
+        if user and user.id != user_id:
+            errors.append(get_error_body(
+                phone_number, TAKEN_PHONE_MSG, 'phone_number', 'body'))
+            raise_conflict_error(errors)
+        validate_image('avatar')

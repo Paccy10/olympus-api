@@ -1,9 +1,12 @@
 """" Module for common validators """
 
-from werkzeug.exceptions import BadRequest, Conflict
+from flask import request
+from werkzeug.exceptions import BadRequest, Conflict, Unauthorized
 
 from ..helpers import get_error_body
-from ..helpers.messages.error import KEY_REQUIRED_MSG, KEY_NOT_ALLOWED_MSG
+from ..helpers.messages.error import (KEY_REQUIRED_MSG,
+                                      KEY_NOT_ALLOWED_MSG,
+                                      NOT_IMAGE_EXT)
 
 
 def check_not_allowed_params(body, keys):
@@ -81,3 +84,47 @@ def raise_conflict_error(errors):
         'errors': errors
     }
     raise error
+
+
+def raise_auth_error(errors):
+    """
+    Raises authorization error
+
+    Args:
+        errors (list): list of errors
+    Raises:
+        (ValidationError): raise an exception
+    """
+
+    error = Unauthorized()
+    error.data = {
+        'status': 'error',
+        'errors': errors
+    }
+    raise error
+
+
+def validate_image(file):
+    """
+    Validates if the file is an image
+
+    Args:
+        file (file): file name
+    Raises:
+        (ValidationError): raises an exception
+    """
+
+    allowed_extensions = {'png', 'jpg', 'jpeg'}
+    if file not in request.files:
+        raise_bad_request_error(
+            [get_error_body(None, KEY_REQUIRED_MSG.format(file), file, 'body')])
+
+    filename = request.files[file].filename
+    if filename == '':
+        raise_bad_request_error(
+            [get_error_body(None, KEY_REQUIRED_MSG.format(file), file, 'body')])
+
+    extension = filename.rsplit('.', 1)[1].lower()
+    if '.' in filename and extension not in allowed_extensions:
+        raise_bad_request_error(
+            [get_error_body(None, NOT_IMAGE_EXT, file, 'body')])

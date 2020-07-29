@@ -3,10 +3,10 @@
 import time
 
 from api.utils.tokens_handler import generate_user_token
-from api.utils.helpers.messages.success import USER_VERIFIED
+from api.utils.helpers.messages.success import USER_VERIFIED_MSG
 from api.utils.helpers.messages.error import (INVALID_USER_TOKEN_MSG,
                                               ALREADY_VERIFIED_MSG)
-from ...constants import API_BASE_URL, CONTENT_TYPE
+from ...constants import API_BASE_URL, JSON_CONTENT_TYPE
 
 
 class TestUserVerify:
@@ -21,7 +21,7 @@ class TestUserVerify:
 
         assert response.status_code == 200
         assert response.json['status'] == 'success'
-        assert response.json['message'] == USER_VERIFIED
+        assert response.json['message'] == USER_VERIFIED_MSG
         assert response.json['data']['user']['is_verified'] is True
 
     def test_user_verification_with_expired_token_fails(self, client, new_user):

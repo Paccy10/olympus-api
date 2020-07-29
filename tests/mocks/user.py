@@ -81,3 +81,25 @@ UNEXISTED_RESET_REQUEST_USER = {
 RESET_PASSWORD_USER = {
     'password': 'Password@1234',
 }
+
+# Profile
+PROFILE_USER = {
+    'firstname': 'John',
+    'lastname': 'Doe',
+    'about': 'I am a software engineer',
+    'phone_number': '0777777777'
+}
+
+PROFILE_USER_WITH_INVALID_PHONE = {
+    'firstname': 'John',
+    'lastname': 'Doe',
+    'about': 'I am a software engineer',
+    'phone_number': '07777'
+}
+
+PROFILE_USER_WITH_TAKEN_PHONE = {
+    'firstname': 'John',
+    'lastname': 'Doe',
+    'about': 'I am a software engineer',
+    'phone_number': '0777777777'
+}

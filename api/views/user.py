@@ -3,19 +3,23 @@
 from flask import request
 from flask_restx import Resource
 
+from ..middlewares.token_required import token_required
 from ..utils.helpers import request_data_strip
 from ..utils.helpers import get_error_body
 from ..utils.helpers.swagger.collections import user_namespace
+from ..utils.helpers.swagger.responses import get_responses
 from ..utils.helpers.swagger.models.user import (signup_model,
                                                  login_model,
                                                  password_reset_model,
-                                                 password_reset_request_model)
+                                                 password_reset_request_model,
+                                                 profile_model)
 from ..utils.helpers.response import Response
-from ..utils.helpers.messages.success import (USER_CREATED,
-                                              USER_VERIFIED,
-                                              USER_LOGGED_IN,
-                                              PASSWORD_RESET_LINK_SENT,
-                                              PASSWORD_UPDATED)
+from ..utils.helpers.messages.success import (USER_CREATED_MSG,
+                                              USER_VERIFIED_MSG,
+                                              USER_LOGGED_IN_MSG,
+                                              PASSWORD_RESET_LINK_SENT_MSG,
+                                              PASSWORD_UPDATED_MSG,
+                                              PROFILE_UPDATED_MSG)
 from ..utils.helpers.messages.error import (INVALID_USER_TOKEN_MSG,
                                             ALREADY_VERIFIED_MSG,
                                             INVALID_CREDENTIALS,
@@ -24,6 +28,7 @@ from ..utils.helpers.passwords_handler import hash_password, check_password
 from ..utils.validators.user import UserValidators
 from ..utils.send_email import send_email
 from ..utils.tokens_handler import verify_user_token, generate_auth_token
+from ..utils.upload_image import upload_image
 from ..models.user import User
 from ..schemas.user import UserSchema
 
@@ -31,14 +36,9 @@ from ..schemas.user import UserSchema
 @user_namespace.route('/signup')
 class UserSignupResource(Resource):
     """" Resource class for user signup endpoint """
-    responses = {
-        400: 'Validation Error',
-        409: 'Conflict Error',
-        201: 'Success'
-    }
 
-    @user_namespace.doc(body=signup_model,
-                        responses=responses)
+    @user_namespace.expect(signup_model)
+    @user_namespace.doc(responses=get_responses(201, 400, 409))
     def post(self):
         """ Endpoint to create the user """
 
@@ -56,19 +56,14 @@ class UserSignupResource(Resource):
             'email_sent': email_sent
         }
 
-        return Response.success(USER_CREATED, response_data, 201)
+        return Response.success(USER_CREATED_MSG, response_data, 201)
 
 
 @user_namespace.route('/<string:token>/verify')
 class UserVerifyResource(Resource):
     """" Resource class for user verification endpoint """
 
-    responses = {
-        400: 'Validation Error',
-        200: 'Success'
-    }
-
-    @user_namespace.doc(responses=responses)
+    @user_namespace.doc(responses=get_responses(200, 400))
     def get(self, token):
         """ Endpoint to verify the user """
 
@@ -89,20 +84,15 @@ class UserVerifyResource(Resource):
             'user': user_data
         }
 
-        return Response.success(USER_VERIFIED, response_data, 200)
+        return Response.success(USER_VERIFIED_MSG, response_data, 200)
 
 
 @user_namespace.route('/login')
 class UserLoginResource(Resource):
     """" Resource class for user login endpoint """
 
-    responses = {
-        400: 'Validation Error',
-        404: 'User not found',
-        200: 'Success'
-    }
-
-    @user_namespace.doc(body=login_model, responses=responses)
+    @user_namespace.expect(login_model)
+    @user_namespace.doc(responses=get_responses(200, 400, 404))
     def post(self):
         """ Endpoint to login the user """
 
@@ -130,20 +120,15 @@ class UserLoginResource(Resource):
             'user': logged_in_user
         }
 
-        return Response.success(USER_LOGGED_IN, response_data, 200)
+        return Response.success(USER_LOGGED_IN_MSG, response_data, 200)
 
 
 @user_namespace.route('/reset-password')
 class UserResetPasswordResource(Resource):
     """" Resource class for user password reset """
 
-    responses = {
-        400: 'Validation Error',
-        404: 'User not found',
-        200: 'Success'
-    }
-
-    @user_namespace.doc(body=password_reset_request_model, responses=responses)
+    @user_namespace.expect(password_reset_request_model)
+    @user_namespace.doc(responses=get_responses(200, 400, 404))
     def post(self):
         """ Endpoint to request password reset link """
 
@@ -164,9 +149,10 @@ class UserResetPasswordResource(Resource):
             'email_sent': email_sent
         }
 
-        return Response.success(PASSWORD_RESET_LINK_SENT, response_data, 200)
+        return Response.success(PASSWORD_RESET_LINK_SENT_MSG, response_data, 200)
 
-    @user_namespace.doc(body=password_reset_model, responses=responses)
+    @user_namespace.expect(password_reset_model)
+    @user_namespace.doc(responses=get_responses(200, 400, 404))
     def patch(self):
         """ Endpoint to rest user password """
 
@@ -189,4 +175,30 @@ class UserResetPasswordResource(Resource):
             'user': user_data,
         }
 
-        return Response.success(PASSWORD_UPDATED, response_data, 200)
+        return Response.success(PASSWORD_UPDATED_MSG, response_data, 200)
+
+
+@user_namespace.route('/profile')
+class UserProfileResource(Resource):
+    """" Resource class for user profile """
+
+    @token_required
+    @user_namespace.expect(profile_model)
+    @user_namespace.doc(responses=get_responses(200, 400, 401))
+    def put(self):
+        """ Endpoint to update user profile """
+
+        user_id = request.decoded_token['user']['id']
+        user = User.find_by_id(user_id)
+
+        request_data = request_data_strip(request.form.to_dict())
+        UserValidators.validate_profile_update(request_data, user_id)
+        avatar = upload_image(request.files['avatar'], 'olympus/users')
+        request_data['avatar'] = avatar
+        user.update(request_data)
+        user_schema = UserSchema(exclude=['password'])
+        response = {
+            'user': user_schema.dump(user)
+        }
+
+        return Response.success(PROFILE_UPDATED_MSG, response, 200)

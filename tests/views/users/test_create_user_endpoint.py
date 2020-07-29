@@ -3,7 +3,7 @@
 from flask import json
 
 import api.views.user
-from api.utils.helpers.messages.success import USER_CREATED
+from api.utils.helpers.messages.success import USER_CREATED_MSG
 from api.utils.helpers.messages.error import (KEY_REQUIRED_MSG,
                                               KEY_NOT_ALLOWED_MSG,
                                               INVALID_EMAIL_MSG,
@@ -16,7 +16,7 @@ from ...mocks.user import (VALID_USER,
                            INVALID_USER_WITH_INVALID_EMAIL,
                            INVALID_USER_WITH_WEAK_PASSWORD,
                            INVALID_USER_WITH_EXISTED_USERNAME)
-from ...constants import API_BASE_URL, CONTENT_TYPE
+from ...constants import API_BASE_URL, JSON_CONTENT_TYPE
 
 
 class TestUserSignup:
@@ -27,11 +27,11 @@ class TestUserSignup:
 
         user_data = json.dumps(VALID_USER)
         response = client.post(
-            f'{API_BASE_URL}/users/signup', data=user_data, content_type=CONTENT_TYPE)
+            f'{API_BASE_URL}/users/signup', data=user_data, content_type=JSON_CONTENT_TYPE)
 
         assert response.status_code == 201
         assert response.json['status'] == 'success'
-        assert response.json['message'] == USER_CREATED
+        assert response.json['message'] == USER_CREATED_MSG
         assert response.json['data']['user']['email'] == VALID_USER['email']
         assert response.json['data']['user']['username'] == VALID_USER['username']
 
@@ -40,7 +40,7 @@ class TestUserSignup:
 
         user_data = json.dumps(INVALID_USER_WITHOUT_FIRSTNAME)
         response = client.post(
-            f'{API_BASE_URL}/users/signup', data=user_data, content_type=CONTENT_TYPE)
+            f'{API_BASE_URL}/users/signup', data=user_data, content_type=JSON_CONTENT_TYPE)
 
         assert response.status_code == 400
         assert response.json['status'] == 'error'
@@ -53,7 +53,7 @@ class TestUserSignup:
 
         user_data = json.dumps(INVALID_USER_WITH__NOT_ALLOWED_PARAM)
         response = client.post(
-            f'{API_BASE_URL}/users/signup', data=user_data, content_type=CONTENT_TYPE)
+            f'{API_BASE_URL}/users/signup', data=user_data, content_type=JSON_CONTENT_TYPE)
 
         assert response.status_code == 400
         assert response.json['status'] == 'error'
@@ -66,7 +66,7 @@ class TestUserSignup:
 
         user_data = json.dumps(INVALID_USER_WITH_INVALID_EMAIL)
         response = client.post(
-            f'{API_BASE_URL}/users/signup', data=user_data, content_type=CONTENT_TYPE)
+            f'{API_BASE_URL}/users/signup', data=user_data, content_type=JSON_CONTENT_TYPE)
 
         assert response.status_code == 400
         assert response.json['status'] == 'error'
@@ -77,7 +77,7 @@ class TestUserSignup:
 
         user_data = json.dumps(VALID_USER)
         response = client.post(
-            f'{API_BASE_URL}/users/signup', data=user_data, content_type=CONTENT_TYPE)
+            f'{API_BASE_URL}/users/signup', data=user_data, content_type=JSON_CONTENT_TYPE)
 
         assert response.status_code == 409
         assert response.json['status'] == 'error'
@@ -88,7 +88,7 @@ class TestUserSignup:
 
         user_data = json.dumps(INVALID_USER_WITH_WEAK_PASSWORD)
         response = client.post(
-            f'{API_BASE_URL}/users/signup', data=user_data, content_type=CONTENT_TYPE)
+            f'{API_BASE_URL}/users/signup', data=user_data, content_type=JSON_CONTENT_TYPE)
 
         assert response.status_code == 400
         assert response.json['status'] == 'error'
@@ -99,7 +99,7 @@ class TestUserSignup:
 
         user_data = json.dumps(INVALID_USER_WITH_EXISTED_USERNAME)
         response = client.post(
-            f'{API_BASE_URL}/users/signup', data=user_data, content_type=CONTENT_TYPE)
+            f'{API_BASE_URL}/users/signup', data=user_data, content_type=JSON_CONTENT_TYPE)
 
         assert response.status_code == 409
         assert response.json['status'] == 'error'

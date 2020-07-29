@@ -21,6 +21,7 @@ psycopg2-binary = "*"
 bcrypt = "*"
 flask-mail = "*"
 pyjwt = "*"
+cloudinary = "*"
 
 [requires]
 python_version = "3.7"

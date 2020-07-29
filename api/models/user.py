@@ -21,7 +21,7 @@ class User(BaseModel):
     is_verified = db.Column(db.Boolean, default=False, nullable=False)
     about = db.Column(db.Text, nullable=True)
     avatar = db.Column(JSON, nullable=True)
-    phone_number = db.Column(db.String(50), nullable=True)
+    phone_number = db.Column(db.String(50), unique=True, nullable=True)
 
     @classmethod
     def find_user(cls, identifier):

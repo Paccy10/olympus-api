@@ -26,3 +26,10 @@ password_reset_model = user_namespace.model('Password Reset', {
     'token': fields.String(required=True, description='User given token'),
     'password': fields.String(required=True, description='User new password')
 })
+
+profile_model = user_namespace.model('Profile', {
+    'firstname': fields.String(required=True, description='User firstname'),
+    'lastname': fields.String(required=True, description='User lastname'),
+    'about': fields.String(required=True, description='User description'),
+    'phone_number': fields.String(required=True, description='User phone number'),
+})

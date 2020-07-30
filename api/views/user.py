@@ -19,7 +19,8 @@ from ..utils.helpers.messages.success import (USER_CREATED_MSG,
                                               USER_LOGGED_IN_MSG,
                                               PASSWORD_RESET_LINK_SENT_MSG,
                                               PASSWORD_UPDATED_MSG,
-                                              PROFILE_UPDATED_MSG)
+                                              PROFILE_UPDATED_MSG,
+                                              PROFILE_FETCHED_MSG)
 from ..utils.helpers.messages.error import (INVALID_USER_TOKEN_MSG,
                                             ALREADY_VERIFIED_MSG,
                                             INVALID_CREDENTIALS,
@@ -178,6 +179,19 @@ class UserResetPasswordResource(Resource):
 @user_namespace.route('/profile')
 class UserProfileResource(Resource):
     """" Resource class for user profile """
+
+    @token_required
+    @user_namespace.doc(responses=get_responses(200, 401))
+    def get(self):
+        """ Endpoint to get own profile """
+        user_id = request.decoded_token['user']['id']
+        user = User.find_by_id(user_id)
+        user_schema = UserSchema(exclude=['password'])
+        response = {
+            'user': user_schema.dump(user)
+        }
+
+        return Response.success(PROFILE_FETCHED_MSG, response, 200)
 
     @token_required
     @user_namespace.expect(profile_model)

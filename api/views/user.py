@@ -178,7 +178,7 @@ class UserResetPasswordResource(Resource):
 
 @user_namespace.route('/profile')
 class UserProfileResource(Resource):
-    """" Resource class for user profile """
+    """" Resource class for user own profile """
 
     @token_required
     @user_namespace.doc(responses=get_responses(200, 401))
@@ -217,3 +217,25 @@ class UserProfileResource(Resource):
         }
 
         return Response.success(PROFILE_UPDATED_MSG, response, 200)
+
+
+@user_namespace.route('/profile/<string:username>')
+class SingleUserProfileResource(Resource):
+    """" Resource class for user profile """
+
+    @user_namespace.doc(responses=get_responses(200, 404))
+    def get(self, username):
+        """ Endpoint to get user profile by username """
+
+        user = User.find_user(username)
+        if not user:
+            return Response.error(
+                [get_error_body(username, USER_NOT_FOUND, 'username', 'url')], 404)
+
+        user_schema = UserSchema(exclude=['password'])
+        user_data = user_schema.dump(user)
+        response_data = {
+            'user': user_data
+        }
+
+        return Response.success(PROFILE_FETCHED_MSG, response_data, 200)

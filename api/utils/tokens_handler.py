@@ -48,7 +48,7 @@ def verify_user_token(token):
     return User.find_by_id(user_id)
 
 
-def generate_auth_token(user_id: int):
+def generate_auth_token(user_id: int, hours=24):
     """
     Generates the authentication token
     Args:
@@ -60,7 +60,7 @@ def generate_auth_token(user_id: int):
 
     payload = {
         'iat': datetime.utcnow(),
-        'exp': datetime.utcnow() + timedelta(hours=1),
+        'exp': datetime.utcnow() + timedelta(hours=hours),
         'user': {
             'id': user_id
         }

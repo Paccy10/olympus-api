@@ -1,4 +1,5 @@
 """ Module for tests constants """
 
 API_BASE_URL = '/api/v1'
-CONTENT_TYPE = 'application/json'
+JSON_CONTENT_TYPE = 'application/json'
+FORM_CONTENT_TYPE = 'multipart/form-data'

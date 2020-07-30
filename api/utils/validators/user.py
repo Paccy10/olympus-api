@@ -2,14 +2,20 @@
 
 import re
 
+from flask import request
 from . import (raise_bad_request_error,
                raise_conflict_error,
-               validate_request_body)
+               validate_request_body,
+               check_not_allowed_params,
+               validate_image)
 from ..helpers import get_error_body
 from ..helpers.messages.error import (INVALID_EMAIL_MSG,
                                       WEAK_PASSWORD_MSG,
                                       TAKEN_EMAIL_MSG,
-                                      TAKEN_USERNAME_MSG)
+                                      TAKEN_USERNAME_MSG,
+                                      INVALID_PHONE_MSG,
+                                      TAKEN_PHONE_MSG,
+                                      KEY_REQUIRED_MSG)
 from ...models.user import User
 
 
@@ -82,13 +88,38 @@ class UserValidators:
             raise_conflict_error(errors)
 
     @classmethod
+    def validate_phone_number(cls, phone_number, user_id):
+        """
+        Checks if the phone number is a valid and available phone number
+
+        Args:
+            phone_number (str): user phone number
+        Raises:
+            (ValidationError): raise an exception if the phone number pattern doesn't
+            correspond the provided phone number regex or if the phone number already 
+            exists in the database
+        """
+
+        errors = []
+        phone_regex = r"^(\+\d{1,2}\s?)?1?\-?\.?\s?\(?\d{3}\)?[\s.-]?\d{3}[\s.-]?\d{4}$"
+        if not re.match(phone_regex, phone_number.strip()):
+            errors.append(get_error_body(
+                phone_number, INVALID_PHONE_MSG, 'phone_number', 'body'))
+            raise_bad_request_error(errors)
+
+        user = User.query.filter(
+            User.phone_number == phone_number.strip()).first()
+        if user and user.id != user_id:
+            errors.append(get_error_body(
+                phone_number, TAKEN_PHONE_MSG, 'phone_number', 'body'))
+            raise_conflict_error(errors)
+
+    @classmethod
     def validate_user_request_body(cls, data: dict, keys):
         """ Validates the user request body """
 
-        errors = validate_request_body(data, keys)
-
-        if len(errors) > 0:
-            raise_bad_request_error(errors)
+        validate_request_body(data, keys)
+        check_not_allowed_params(data, keys)
 
     @classmethod
     def validate_signup(cls, data: dict):
@@ -109,3 +140,21 @@ class UserValidators:
 
         cls.validate_user_request_body(data, keys)
         cls.validate_password(data.get('password'))
+
+    @classmethod
+    def validate_profile_update(cls, data: dict, user_id):
+        """ Validates the user profile update """
+
+        required_keys = ['firstname', 'lastname']
+        optional_keys = ['about', 'phone_number']
+        allowed_keys = required_keys + optional_keys
+
+        validate_request_body(data, required_keys)
+        check_not_allowed_params(data, allowed_keys)
+
+        phone_number = data.get('phone_number')
+        if phone_number:
+            cls.validate_phone_number(phone_number, user_id)
+
+        if 'avatar' in request.files:
+            validate_image('avatar')

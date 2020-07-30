@@ -3,14 +3,14 @@
 from flask import json
 
 import api.views.user
-from api.utils.helpers.messages.success import USER_LOGGED_IN
+from api.utils.helpers.messages.success import USER_LOGGED_IN_MSG
 from api.utils.helpers.messages.error import (USER_NOT_FOUND,
                                               INVALID_CREDENTIALS,
                                               KEY_REQUIRED_MSG)
 from ...mocks.user import (USER_WITH_CORRECT_CREDENTIALS,
                            USER_WITH_INCORRECT_USERNAME,
                            USER_WITH_INCORRECT_PASSWORD)
-from ...constants import API_BASE_URL, CONTENT_TYPE
+from ...constants import API_BASE_URL, JSON_CONTENT_TYPE
 
 
 class TestUserLogin:
@@ -23,11 +23,11 @@ class TestUserLogin:
         new_user.update({'is_verified': True})
         user_data = json.dumps(USER_WITH_CORRECT_CREDENTIALS)
         response = client.post(
-            f'{API_BASE_URL}/users/login', data=user_data, content_type=CONTENT_TYPE)
+            f'{API_BASE_URL}/users/login', data=user_data, content_type=JSON_CONTENT_TYPE)
 
         assert response.status_code == 200
         assert response.json['status'] == 'success'
-        assert response.json['message'] == USER_LOGGED_IN
+        assert response.json['message'] == USER_LOGGED_IN_MSG
         assert 'token' in response.json['data']
         assert 'user' in response.json['data']
 
@@ -36,7 +36,7 @@ class TestUserLogin:
 
         user_data = json.dumps({})
         response = client.post(
-            f'{API_BASE_URL}/users/login', data=user_data, content_type=CONTENT_TYPE)
+            f'{API_BASE_URL}/users/login', data=user_data, content_type=JSON_CONTENT_TYPE)
 
         assert response.status_code == 400
         assert response.json['status'] == 'error'
@@ -50,7 +50,7 @@ class TestUserLogin:
 
         user_data = json.dumps(USER_WITH_INCORRECT_USERNAME)
         response = client.post(
-            f'{API_BASE_URL}/users/login', data=user_data, content_type=CONTENT_TYPE)
+            f'{API_BASE_URL}/users/login', data=user_data, content_type=JSON_CONTENT_TYPE)
 
         assert response.status_code == 404
         assert response.json['status'] == 'error'
@@ -61,7 +61,7 @@ class TestUserLogin:
 
         user_data = json.dumps(USER_WITH_INCORRECT_PASSWORD)
         response = client.post(
-            f'{API_BASE_URL}/users/login', data=user_data, content_type=CONTENT_TYPE)
+            f'{API_BASE_URL}/users/login', data=user_data, content_type=JSON_CONTENT_TYPE)
 
         assert response.status_code == 404
         assert response.json['status'] == 'error'

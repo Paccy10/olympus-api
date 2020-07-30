@@ -7,3 +7,4 @@ PASSWORD_RESET_LINK_SENT_MSG = 'Password reset link successfully sent.'\
     ' Please check your email to continue'
 PASSWORD_UPDATED_MSG = 'User password successfully updated'
 PROFILE_UPDATED_MSG = 'User profile successfully updated'
+PROFILE_FETCHED_MSG = 'User profile successfully fetched'

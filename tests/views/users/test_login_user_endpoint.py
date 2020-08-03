@@ -4,7 +4,7 @@ from flask import json
 
 import api.views.user
 from api.utils.helpers.messages.success import USER_LOGGED_IN_MSG
-from api.utils.helpers.messages.error import (USER_NOT_FOUND,
+from api.utils.helpers.messages.error import (USER_NOT_FOUND_MSG,
                                               INVALID_CREDENTIALS,
                                               KEY_REQUIRED_MSG)
 from ...mocks.user import (USER_WITH_CORRECT_CREDENTIALS,
@@ -54,7 +54,7 @@ class TestUserLogin:
 
         assert response.status_code == 404
         assert response.json['status'] == 'error'
-        assert response.json['errors'][0]['message'] == USER_NOT_FOUND
+        assert response.json['errors'][0]['message'] == USER_NOT_FOUND_MSG
 
     def test_user_login_with_incorrect_password_fails(self, client):
         """ Testing user login with incorrect password """

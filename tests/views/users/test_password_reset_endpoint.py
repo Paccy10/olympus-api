@@ -5,7 +5,7 @@ from flask import json
 import api.views.user
 from api.utils.helpers.messages.success import (PASSWORD_UPDATED_MSG,
                                                 PASSWORD_RESET_LINK_SENT_MSG)
-from api.utils.helpers.messages.error import (USER_NOT_FOUND,
+from api.utils.helpers.messages.error import (USER_NOT_FOUND_MSG,
                                               KEY_REQUIRED_MSG,
                                               INVALID_USER_TOKEN_MSG)
 from api.utils.tokens_handler import generate_user_token
@@ -40,7 +40,7 @@ class TestUserPasswordReset:
 
         assert response.status_code == 404
         assert response.json['status'] == 'error'
-        assert response.json['errors'][0]['message'] == USER_NOT_FOUND
+        assert response.json['errors'][0]['message'] == USER_NOT_FOUND_MSG
 
     def test_reset_password_succeeds(self, client, init_db, new_user):
         """ Testing user password reset """

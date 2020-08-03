@@ -15,7 +15,7 @@ from api.utils.helpers.messages.error import (INVALID_PHONE_MSG,
                                               INVALID_AUTH_TOKEN_MSG,
                                               EXPIRED_AUTH_TOKEN_MSG,
                                               KEY_REQUIRED_MSG,
-                                              NOT_IMAGE_EXT)
+                                              NOT_IMAGE_EXT_MSG)
 from ...mocks.user import (PROFILE_USER,
                            PROFILE_USER_WITH_INVALID_PHONE,
                            PROFILE_USER_WITH_TAKEN_PHONE)
@@ -188,4 +188,4 @@ class TestUserProfileUpdate:
 
         assert response.status_code == 400
         assert response.json['status'] == 'error'
-        assert response.json['errors'][0]['message'] == NOT_IMAGE_EXT
+        assert response.json['errors'][0]['message'] == NOT_IMAGE_EXT_MSG

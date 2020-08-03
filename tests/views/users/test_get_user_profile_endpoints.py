@@ -2,7 +2,7 @@
 
 import api.views.user
 from api.utils.helpers.messages.success import PROFILE_FETCHED_MSG
-from api.utils.helpers.messages.error import (USER_NOT_FOUND)
+from api.utils.helpers.messages.error import (USER_NOT_FOUND_MSG)
 from ...constants import API_BASE_URL
 
 
@@ -41,4 +41,4 @@ class TestGetUserProfile:
 
         assert response.status_code == 404
         assert response.json['status'] == 'error'
-        assert response.json['errors'][0]['message'] == USER_NOT_FOUND
+        assert response.json['errors'][0]['message'] == USER_NOT_FOUND_MSG

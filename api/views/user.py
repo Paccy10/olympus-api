@@ -24,7 +24,7 @@ from ..utils.helpers.messages.success import (USER_CREATED_MSG,
 from ..utils.helpers.messages.error import (INVALID_USER_TOKEN_MSG,
                                             ALREADY_VERIFIED_MSG,
                                             INVALID_CREDENTIALS,
-                                            USER_NOT_FOUND)
+                                            USER_NOT_FOUND_MSG)
 from ..utils.helpers.passwords_handler import hash_password, check_password
 from ..utils.validators.user import UserValidators
 from ..utils.send_email import send_email
@@ -104,11 +104,11 @@ class UserLoginResource(Resource):
 
         if not user:
             return Response.error(
-                [get_error_body(None, USER_NOT_FOUND, '', 'body')], 404)
+                [get_error_body(None, USER_NOT_FOUND_MSG, '')], 404)
 
         if not check_password(request_data['password'], user.password):
             return Response.error(
-                [get_error_body(None, INVALID_CREDENTIALS, '', 'body')], 404)
+                [get_error_body(None, INVALID_CREDENTIALS, '')], 404)
 
         user_schema = UserSchema(exclude=['password'])
         user_data = user_schema.dump(user)
@@ -136,7 +136,7 @@ class UserResetPasswordResource(Resource):
 
         if not user:
             return Response.error(
-                [get_error_body(None, USER_NOT_FOUND, '', '')], 404)
+                [get_error_body(None, USER_NOT_FOUND_MSG, '', '')], 404)
 
         user_schema = UserSchema(exclude=['password'])
         user_data = user_schema.dump(user)
@@ -162,7 +162,7 @@ class UserResetPasswordResource(Resource):
 
         if not user:
             return Response.error(
-                [get_error_body(token, INVALID_USER_TOKEN_MSG, 'token', 'body')], 400)
+                [get_error_body(token, INVALID_USER_TOKEN_MSG, 'token')], 400)
 
         password = hash_password(password)
 
@@ -230,7 +230,7 @@ class SingleUserProfileResource(Resource):
         user = User.find_user(username)
         if not user:
             return Response.error(
-                [get_error_body(username, USER_NOT_FOUND, 'username', 'url')], 404)
+                [get_error_body(username, USER_NOT_FOUND_MSG, 'username', 'url')], 404)
 
         user_schema = UserSchema(exclude=['password'])
         user_data = user_schema.dump(user)

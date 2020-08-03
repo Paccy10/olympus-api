@@ -6,7 +6,9 @@ from config.server import application
 from api.models.database import db
 
 
-pytest_plugins = ['tests.fixtures.user', 'tests.fixtures.authorization']
+pytest_plugins = ['tests.fixtures.user',
+                  'tests.fixtures.authorization',
+                  'tests.fixtures.category']
 
 
 @pytest.fixture(scope='module')

@@ -1,7 +1,7 @@
 """ Module for common helpers """
 
 
-def get_error_body(value, message, param, location):
+def get_error_body(value, message, param, location='body'):
     """
     Returns a well formed error body
 

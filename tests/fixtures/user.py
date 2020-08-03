@@ -25,3 +25,16 @@ def another_user(init_db):
                 email='kelly.doe@app.com',
                 username='Kelly',
                 password=hash_password('Password1234'))
+
+
+@pytest.fixture(scope='module')
+def admin_user(init_db):
+    """ New admin fixture """
+
+    return User(firstname='Admin',
+                lastname='Doe',
+                email='admin.doe@app.com',
+                username='Admin',
+                password=hash_password('Password1234'),
+                is_verified=True,
+                is_admin=True)

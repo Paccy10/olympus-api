@@ -6,7 +6,8 @@ from werkzeug.exceptions import BadRequest, Conflict, Unauthorized
 from ..helpers import get_error_body
 from ..helpers.messages.error import (KEY_REQUIRED_MSG,
                                       KEY_NOT_ALLOWED_MSG,
-                                      NOT_IMAGE_EXT)
+                                      NOT_IMAGE_EXT_MSG,
+                                      NOT_INTEGER_MSG)
 
 
 def raise_bad_request_error(errors):
@@ -79,12 +80,12 @@ def validate_image(file):
 
     if filename == '':
         raise_bad_request_error(
-            [get_error_body(None, KEY_REQUIRED_MSG.format(file), file, 'body')])
+            [get_error_body(None, KEY_REQUIRED_MSG.format(file), file)])
 
     extension = filename.rsplit('.', 1)[1].lower()
     if '.' in filename and extension not in extensions:
         raise_bad_request_error(
-            [get_error_body(None, NOT_IMAGE_EXT, file, 'body')])
+            [get_error_body(None, NOT_IMAGE_EXT_MSG, file)])
 
 
 def check_not_allowed_params(body, keys):
@@ -102,7 +103,7 @@ def check_not_allowed_params(body, keys):
     for prop, value in body.items():
         if prop not in keys:
             errors.append(get_error_body(
-                value, KEY_NOT_ALLOWED_MSG.format(prop), f'{prop}', 'body'))
+                value, KEY_NOT_ALLOWED_MSG.format(prop), f'{prop}'))
 
     if len(errors) > 0:
         raise_bad_request_error(errors)
@@ -124,7 +125,22 @@ def validate_request_body(body, keys):
         param = body.get(key)
         if not param or not param.strip():
             errors.append(get_error_body(
-                param, KEY_REQUIRED_MSG.format(key), f'{key}', 'body'))
+                param, KEY_REQUIRED_MSG.format(key), f'{key}'))
 
     if len(errors) > 0:
         raise_bad_request_error(errors)
+
+
+def validate_positive_integer(key, value):
+    """
+    Checks if the provided value is a positive integer
+
+    Args:
+        value (int): value to validate
+    Raises:
+        (ValidationError): raise an exception if the provided value is not a positive integer
+    """
+
+    if not isinstance(value, int) or value < 0:
+        raise_bad_request_error(
+            [get_error_body(value, NOT_INTEGER_MSG.format(key), key)])

@@ -11,3 +11,5 @@ class CategorySchema(BaseSchema):
     name = fields.String(required=True)
     description = fields.String(required=True)
     parent_id = fields.Integer(required=True)
+    subcategories = fields.Nested(
+        lambda: CategorySchema(only=('id', 'name', 'description'), many=True))

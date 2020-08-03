@@ -13,3 +13,4 @@ class Category(BaseModel):
     description = db.Column(db.Text, nullable=True)
     parent_id = db.Column(db.Integer, db.ForeignKey(
         'categories.id', ondelete='SET NULL'), nullable=True)
+    subcategories = db.relationship('Category')

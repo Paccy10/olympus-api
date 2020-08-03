@@ -12,3 +12,4 @@ PROFILE_FETCHED_MSG = 'User profile successfully fetched'
 
 # Categories
 CATEGORY_CREATED_MSG = 'Category successfully created'
+CATEGORIES_FETCHED_MSG = 'Categories successfully fetched'

@@ -11,7 +11,8 @@ from ..utils.helpers.swagger.collections import category_namespace
 from ..utils.helpers.swagger.responses import get_responses
 from ..utils.helpers.swagger.models.category import (category_model)
 from ..utils.helpers.response import Response
-from ..utils.helpers.messages.success import (CATEGORY_CREATED_MSG)
+from ..utils.helpers.messages.success import (CATEGORY_CREATED_MSG,
+                                              CATEGORIES_FETCHED_MSG)
 from ..utils.validators.category import CategoryValidators
 from ..models.category import Category
 from ..schemas.category import CategorySchema
@@ -40,3 +41,15 @@ class CategoryResource(Resource):
         }
 
         return Response.success(CATEGORY_CREATED_MSG, response, 201)
+
+    @category_namespace.doc(responses=get_responses(200))
+    def get(self):
+        """ Endpoint to get all categories """
+
+        category_schema = CategorySchema(many=True)
+        categories = category_schema.dump(Category.find_all())
+        response = {
+            'categories': categories
+        }
+
+        return Response.success(CATEGORIES_FETCHED_MSG, response, 200)

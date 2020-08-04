@@ -17,6 +17,17 @@ class CategoryValidators:
     """ Category validators class """
 
     @classmethod
+    def validate_category_body(cls, data):
+        """ Validates the category request body """
+
+        required_keys = ['name']
+        optional_keys = ['description', 'parent_id']
+        allowed_keys = required_keys + optional_keys
+
+        validate_request_body(data, required_keys)
+        check_not_allowed_params(data, allowed_keys)
+
+    @classmethod
     def validate_subcategory(cls, parent_id):
         """
             Checks if the provided parent category exists
@@ -40,13 +51,7 @@ class CategoryValidators:
     def validate_create(cls, data: dict):
         """ Validates the category creation """
 
-        required_keys = ['name']
-        optional_keys = ['description', 'parent_id']
-        allowed_keys = required_keys + optional_keys
-
-        validate_request_body(data, required_keys)
-        check_not_allowed_params(data, allowed_keys)
-
+        cls.validate_category_body(data)
         name = data.get('name')
         parent_id = data.get('parent_id')
         category = Category.query.filter(
@@ -58,3 +63,20 @@ class CategoryValidators:
 
         if parent_id or parent_id == '':
             cls.validate_subcategory(parent_id)
+
+    @classmethod
+    def validate_update(cls, data: dict, category_id):
+        """ Validates update category """
+
+        cls.validate_category_body(data)
+        name = data.get('name')
+        parent_id = data.get('parent_id')
+        category = Category.query.filter(
+            Category.name == name.lower().strip()).first()
+
+        if parent_id or parent_id == '':
+            cls.validate_subcategory(parent_id)
+
+        if category and category.id != category_id:
+            raise_conflict_error(
+                [get_error_body(name, TAKEN_CATEGORY_NAME_MSG, 'name')])

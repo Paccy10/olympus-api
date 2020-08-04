@@ -32,3 +32,7 @@ INVALID_CATEGORY_WITH_UNEXISTED_PARENT_ID = {
     'description': '',
     'parent_id': 100
 }
+
+INVALID_UPDATE_CATEGORY = {
+    'name': 'test'
+}

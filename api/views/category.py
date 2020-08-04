@@ -12,7 +12,9 @@ from ..utils.helpers.swagger.responses import get_responses
 from ..utils.helpers.swagger.models.category import (category_model)
 from ..utils.helpers.response import Response
 from ..utils.helpers.messages.success import (CATEGORY_CREATED_MSG,
-                                              CATEGORIES_FETCHED_MSG)
+                                              CATEGORIES_FETCHED_MSG,
+                                              CATEGORY_FETCHED_MSG)
+from ..utils.helpers.messages.error import (CATEGORY_NOT_FOUND_MSG)
 from ..utils.validators.category import CategoryValidators
 from ..models.category import Category
 from ..schemas.category import CategorySchema
@@ -53,3 +55,25 @@ class CategoryResource(Resource):
         }
 
         return Response.success(CATEGORIES_FETCHED_MSG, response, 200)
+
+
+@category_namespace.route('/<string:name>')
+class SingleCategoryResource(Resource):
+    """" Resource class for single category endpoints """
+
+    @category_namespace.doc(responses=get_responses(200))
+    def get(self, name):
+        """ Endpoint to get single category """
+
+        category = Category.query.filter_by(name=name).first()
+
+        if not category:
+            return Response.error(
+                [get_error_body(name, CATEGORY_NOT_FOUND_MSG, 'name', 'url')], 404)
+
+        category_schema = CategorySchema()
+        response = {
+            'category': category_schema.dump(category)
+        }
+
+        return Response.success(CATEGORY_FETCHED_MSG, response, 200)

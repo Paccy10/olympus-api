@@ -3,7 +3,8 @@
 from flask import json
 
 import api.views.category
-from api.utils.helpers.messages.success import CATEGORY_UPDATED_MSG
+from api.utils.helpers.messages.success import (CATEGORY_UPDATED_MSG,
+                                                CATEGORY_DELETED_MSG)
 from api.utils.helpers.messages.error import (CATEGORY_NOT_FOUND_MSG,
                                               TAKEN_CATEGORY_NAME_MSG)
 from ...mocks.category import (VALID_CATEGORY,
@@ -73,5 +74,30 @@ class TestUpdateCategory:
             data=category_data, headers=admin_auth_header)
 
         assert response.status_code == 400
+        assert response.json['status'] == 'error'
+        assert response.json['errors'][0]['message'] == CATEGORY_NOT_FOUND_MSG
+
+
+class TestDeleteCategory:
+    """ Class for testing delete category endpoint """
+
+    def test_delete_category_succeeds(self, client, init_db, new_category, admin_auth_header):
+        """ Testing delete category """
+
+        new_category.save()
+        response = client.delete(
+            f'{API_BASE_URL}/categories/{new_category.name}', headers=admin_auth_header)
+
+        assert response.status_code == 200
+        assert response.json['status'] == 'success'
+        assert response.json['message'] == CATEGORY_DELETED_MSG
+
+    def test_delete_category_with_unexisted_name_fails(self, client, init_db, admin_auth_header):
+        """ Testing delete category with unexisted name """
+
+        response = client.delete(
+            f'{API_BASE_URL}/categories/good', headers=admin_auth_header)
+
+        assert response.status_code == 404
         assert response.json['status'] == 'error'
         assert response.json['errors'][0]['message'] == CATEGORY_NOT_FOUND_MSG

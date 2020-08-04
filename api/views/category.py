@@ -13,7 +13,8 @@ from ..utils.helpers.swagger.models.category import (category_model)
 from ..utils.helpers.response import Response
 from ..utils.helpers.messages.success import (CATEGORY_CREATED_MSG,
                                               CATEGORIES_FETCHED_MSG,
-                                              CATEGORY_FETCHED_MSG)
+                                              CATEGORY_FETCHED_MSG,
+                                              CATEGORY_UPDATED_MSG)
 from ..utils.helpers.messages.error import (CATEGORY_NOT_FOUND_MSG)
 from ..utils.validators.category import CategoryValidators
 from ..models.category import Category
@@ -77,3 +78,27 @@ class SingleCategoryResource(Resource):
         }
 
         return Response.success(CATEGORY_FETCHED_MSG, response, 200)
+
+    @token_required
+    @permission_required
+    @category_namespace.expect(category_model)
+    @category_namespace.doc(responses=get_responses(200, 400, 401, 403, 409))
+    def put(self, name):
+        """ Endpoint to update category """
+
+        category = Category.query.filter_by(name=name).first()
+
+        if not category:
+            return Response.error(
+                [get_error_body(name, CATEGORY_NOT_FOUND_MSG, 'name', 'url')], 404)
+
+        request_data = request_data_strip(request.get_json())
+        CategoryValidators.validate_update(request_data, category.id)
+
+        category.update(request_data)
+        category_schema = CategorySchema()
+        response = {
+            'category': category_schema.dump(category)
+        }
+
+        return Response.success(CATEGORY_UPDATED_MSG, response, 200)

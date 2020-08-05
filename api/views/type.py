@@ -12,7 +12,8 @@ from ..utils.helpers.swagger.responses import get_responses
 from ..utils.helpers.swagger.models.type import (type_model)
 from ..utils.helpers.response import Response
 from ..utils.helpers.messages.success import (TYPE_CREATED_MSG,
-                                              TYPES_FETCHED_MSG)
+                                              TYPES_FETCHED_MSG,
+                                              TYPE_FETCHED_MSG)
 from ..utils.helpers.messages.error import (TYPE_NOT_FOUND_MSG)
 from ..utils.validators.type import TypeValidators
 from ..models.type import Type
@@ -21,7 +22,7 @@ from ..schemas.type import TypeSchema
 
 @type_namespace.route('')
 class TypeResource(Resource):
-    """" Resource class for category endpoints """
+    """" Resource class for property types endpoints """
 
     @token_required
     @permission_required
@@ -54,3 +55,25 @@ class TypeResource(Resource):
         }
 
         return Response.success(TYPES_FETCHED_MSG, response, 200)
+
+
+@type_namespace.route('/<string:name>')
+class SingleTypeResource(Resource):
+    """" Resource class for single propty type endpoints """
+
+    @type_namespace.doc(responses=get_responses(200, 404))
+    def get(self, name):
+        """ Endpoint to get single type """
+
+        property_type = Type.query.filter_by(name=name).first()
+
+        if not property_type:
+            return Response.error(
+                [get_error_body(name, TYPE_NOT_FOUND_MSG, 'name', 'url')], 404)
+
+        type_schema = TypeSchema()
+        response = {
+            'type': type_schema.dump(property_type)
+        }
+
+        return Response.success(TYPE_FETCHED_MSG, response, 200)

@@ -28,3 +28,7 @@ UNAUTHORIZED_MSG = 'Permission denied. You are not authorized to perform this ac
 # Categories
 TAKEN_CATEGORY_NAME_MSG = 'The provided category name already exists'
 CATEGORY_NOT_FOUND_MSG = 'Category not found'
+
+# Types
+TAKEN_TYPE_NAME_MSG = 'The provided type name already exists'
+TYPE_NOT_FOUND_MSG = 'Property type not found'

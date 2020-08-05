@@ -16,3 +16,9 @@ category_namespace = api.namespace(
     description='A Collection of Category related endpoints',
     path='/categories'
 )
+
+type_namespace = api.namespace(
+    'Property types',
+    description='A Collection of Property Types related endpoints',
+    path='/types'
+)

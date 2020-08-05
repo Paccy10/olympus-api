@@ -58,3 +58,28 @@ class TestUpdateType:
         assert response.status_code == 409
         assert response.json['status'] == 'error'
         assert response.json['errors'][0]['message'] == TAKEN_TYPE_NAME_MSG
+
+
+class TestDeleteType:
+    """ Class for testing delete type endpoint """
+
+    def test_delete_type_succeeds(self, client, init_db, new_type, admin_auth_header):
+        """ Testing delete type """
+
+        new_type.save()
+        response = client.delete(
+            f'{API_BASE_URL}/types/{new_type.name}', headers=admin_auth_header)
+
+        assert response.status_code == 200
+        assert response.json['status'] == 'success'
+        assert response.json['message'] == TYPE_DELETED_MSG
+
+    def test_delete_type_with_unexisted_name_fails(self, client, init_db, admin_auth_header):
+        """ Testing delete type with unexisted name """
+
+        response = client.delete(
+            f'{API_BASE_URL}/types/good', headers=admin_auth_header)
+
+        assert response.status_code == 404
+        assert response.json['status'] == 'error'
+        assert response.json['errors'][0]['message'] == TYPE_NOT_FOUND_MSG

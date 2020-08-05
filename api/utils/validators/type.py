@@ -34,3 +34,16 @@ class TypeValidators:
         if property_type:
             raise_conflict_error(
                 [get_error_body(name, TAKEN_TYPE_NAME_MSG, 'name')])
+
+    @classmethod
+    def validate_update(cls, data: dict, type_id):
+        """ Validates the type creation """
+
+        cls.validate_type_body(data)
+        name = data.get('name')
+        property_type = Type.query.filter(
+            Type.name == name.lower().strip()).first()
+
+        if property_type and property_type.id != type_id:
+            raise_conflict_error(
+                [get_error_body(name, TAKEN_TYPE_NAME_MSG, 'name')])

@@ -13,7 +13,8 @@ from ..utils.helpers.swagger.models.type import (type_model)
 from ..utils.helpers.response import Response
 from ..utils.helpers.messages.success import (TYPE_CREATED_MSG,
                                               TYPES_FETCHED_MSG,
-                                              TYPE_FETCHED_MSG)
+                                              TYPE_FETCHED_MSG,
+                                              TYPE_UPDATED_MSG)
 from ..utils.helpers.messages.error import (TYPE_NOT_FOUND_MSG)
 from ..utils.validators.type import TypeValidators
 from ..models.type import Type
@@ -77,3 +78,27 @@ class SingleTypeResource(Resource):
         }
 
         return Response.success(TYPE_FETCHED_MSG, response, 200)
+
+    @token_required
+    @permission_required
+    @type_namespace.expect(type_model)
+    @type_namespace.doc(responses=get_responses(200, 400, 401, 403, 404, 409))
+    def put(self, name):
+        """ Endpoint to update type """
+
+        property_type = Type.query.filter_by(name=name).first()
+
+        if not property_type:
+            return Response.error(
+                [get_error_body(name, TYPE_NOT_FOUND_MSG, 'name', 'url')], 404)
+
+        request_data = request_data_strip(request.get_json())
+        TypeValidators.validate_update(request_data, property_type.id)
+
+        property_type.update(request_data)
+        type_schema = TypeSchema()
+        response = {
+            'type': type_schema.dump(property_type)
+        }
+
+        return Response.success(TYPE_UPDATED_MSG, response, 200)

@@ -11,8 +11,7 @@ from ..utils.helpers.swagger.collections import type_namespace
 from ..utils.helpers.swagger.responses import get_responses
 from ..utils.helpers.swagger.models.type import (type_model)
 from ..utils.helpers.response import Response
-from ..utils.helpers.messages.success import (TYPE_CREATED_MSG,
-                                              TYPES_FETCHED_MSG)
+from ..utils.helpers.messages.success import (TYPE_CREATED_MSG)
 from ..utils.helpers.messages.error import (TYPE_NOT_FOUND_MSG)
 from ..utils.validators.type import TypeValidators
 from ..models.type import Type
@@ -42,15 +41,3 @@ class TypeResource(Resource):
         }
 
         return Response.success(TYPE_CREATED_MSG, response, 201)
-
-    @type_namespace.doc(responses=get_responses(200))
-    def get(self):
-        """ Endpoint to get all types """
-
-        type_schema = TypeSchema(many=True)
-        types = type_schema.dump(Type.find_all())
-        response = {
-            'types': types
-        }
-
-        return Response.success(TYPES_FETCHED_MSG, response, 200)

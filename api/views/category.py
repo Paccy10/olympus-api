@@ -108,7 +108,7 @@ class SingleCategoryResource(Resource):
     @permission_required
     @category_namespace.doc(responses=get_responses(200, 401, 403, 404))
     def delete(self, name):
-        """ Endpoint to update category """
+        """ Endpoint to delete category """
 
         category = Category.query.filter_by(name=name).first()
 

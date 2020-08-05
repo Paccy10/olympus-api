@@ -16,3 +16,10 @@ CATEGORIES_FETCHED_MSG = 'Categories successfully fetched'
 CATEGORY_FETCHED_MSG = 'Category successfully fetched'
 CATEGORY_UPDATED_MSG = 'Category successfully updated'
 CATEGORY_DELETED_MSG = 'Category successfully deleted'
+
+# Types
+TYPE_CREATED_MSG = 'Type successfully created'
+TYPES_FETCHED_MSG = 'Types successfully fetched'
+TYPE_FETCHED_MSG = 'Type successfully fetched'
+TYPE_UPDATED_MSG = 'Type successfully updated'
+TYPE_DELETED_MSG = 'Type successfully deleted'

@@ -10,8 +10,10 @@ from api.utils.helpers import get_error_body
 from api.models.database import db
 from api.models.user import User
 from api.models.category import Category
+from api.models.type import Type
 import api.views.user
 import api.views.category
+import api.views.type
 
 migrate = Migrate(application, db)
 

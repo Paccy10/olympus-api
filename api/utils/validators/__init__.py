@@ -7,7 +7,8 @@ from ..helpers import get_error_body
 from ..helpers.messages.error import (KEY_REQUIRED_MSG,
                                       KEY_NOT_ALLOWED_MSG,
                                       NOT_IMAGE_EXT_MSG,
-                                      NOT_INTEGER_MSG)
+                                      NOT_INTEGER_MSG,
+                                      NOT_FLOAT_MSG)
 
 
 def raise_bad_request_error(errors):
@@ -64,11 +65,12 @@ def raise_auth_error(errors):
     raise error
 
 
-def validate_image(file):
+def validate_image(key, file):
     """
     Validates if the file is an image
 
     Args:
+        key(str): key name
         file (file): file name
     Raises:
         (ValidationError): raises an exception
@@ -76,16 +78,16 @@ def validate_image(file):
 
     extensions = {'png', 'jpg', 'jpeg'}
 
-    filename = request.files[file].filename
+    filename = file.filename
 
     if filename == '':
         raise_bad_request_error(
-            [get_error_body(None, KEY_REQUIRED_MSG.format(file), file)])
+            [get_error_body(None, KEY_REQUIRED_MSG.format(key), key)])
 
     extension = filename.rsplit('.', 1)[1].lower()
     if '.' in filename and extension not in extensions:
         raise_bad_request_error(
-            [get_error_body(None, NOT_IMAGE_EXT_MSG, file)])
+            [get_error_body(None, NOT_IMAGE_EXT_MSG, key)])
 
 
 def check_not_allowed_params(body, keys):
@@ -141,6 +143,27 @@ def validate_positive_integer(key, value):
         (ValidationError): raise an exception if the provided value is not a positive integer
     """
 
-    if not isinstance(value, int) or value < 0:
+    try:
+        if int(value) < 0:
+            raise_bad_request_error(
+                [get_error_body(value, NOT_INTEGER_MSG.format(key), key)])
+    except ValueError:
         raise_bad_request_error(
             [get_error_body(value, NOT_INTEGER_MSG.format(key), key)])
+
+
+def validate_float(key, value):
+    """
+    Checks if the provided value is a float number
+
+    Args:
+        value (float): value to validate
+    Raises:
+        (ValidationError): raise an exception if the provided value is not a float number
+    """
+
+    try:
+        float(value)
+    except ValueError:
+        raise_bad_request_error(
+            [get_error_body(value, NOT_FLOAT_MSG.format(key), key)])

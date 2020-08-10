@@ -23,3 +23,10 @@ TYPES_FETCHED_MSG = 'Types successfully fetched'
 TYPE_FETCHED_MSG = 'Type successfully fetched'
 TYPE_UPDATED_MSG = 'Type successfully updated'
 TYPE_DELETED_MSG = 'Type successfully deleted'
+
+# Properties
+PROPERTY_CREATED_MSG = 'Property successfully created'
+PROPERTIES_FETCHED_MSG = 'Properties successfully fetched'
+PROPERTY_FETCHED_MSG = 'Property successfully fetched'
+PROPERTY_UPDATED_MSG = 'Property successfully updated'
+PROPERTY_DELETED_MSG = 'Property successfully deleted'

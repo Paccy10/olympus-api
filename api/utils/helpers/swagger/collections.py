@@ -22,3 +22,9 @@ type_namespace = api.namespace(
     description='A Collection of Property Types related endpoints',
     path='/types'
 )
+
+property_namespace = api.namespace(
+    'Properties',
+    description='A Collection of Property related endpoints',
+    path='/properties'
+)

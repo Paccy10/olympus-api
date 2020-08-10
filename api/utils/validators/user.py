@@ -14,7 +14,8 @@ from ..helpers.messages.error import (INVALID_EMAIL_MSG,
                                       TAKEN_EMAIL_MSG,
                                       TAKEN_USERNAME_MSG,
                                       INVALID_PHONE_MSG,
-                                      TAKEN_PHONE_MSG)
+                                      TAKEN_PHONE_MSG,
+                                      KEY_REQUIRED_MSG)
 from ...models.user import User
 
 
@@ -153,4 +154,4 @@ class UserValidators:
             cls.validate_phone_number(phone_number, user_id)
 
         if 'avatar' in request.files:
-            validate_image('avatar')
+            validate_image('avatar', request.files['avatar'])

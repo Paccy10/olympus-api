@@ -11,9 +11,11 @@ from api.models.database import db
 from api.models.user import User
 from api.models.category import Category
 from api.models.type import Type
+from api.models.property import Property
 import api.views.user
 import api.views.category
 import api.views.type
+import api.views.property
 
 migrate = Migrate(application, db)
 

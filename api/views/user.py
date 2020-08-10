@@ -205,11 +205,12 @@ class UserProfileResource(Resource):
         request_data = request_data_strip(request.form.to_dict())
         UserValidators.validate_profile_update(request_data, user_id)
 
-        if 'avatar' in request.files and user.avatar:
-            destroy_image(user.avatar['public_id'])
+        if 'avatar' in request.files:
+            if user.avatar:
+                destroy_image(user.avatar['public_id'])
+            avatar = upload_image(request.files['avatar'], 'olympus/users')
+            request_data['avatar'] = avatar
 
-        avatar = upload_image(request.files['avatar'], 'olympus/users')
-        request_data['avatar'] = avatar
         user.update(request_data)
         user_schema = UserSchema(exclude=['password'])
         response = {

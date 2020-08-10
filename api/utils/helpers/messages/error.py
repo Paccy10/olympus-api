@@ -4,6 +4,7 @@ UNDEFINED_ROUTE_MSG = 'The requested route is not defined'
 KEY_REQUIRED_MSG = 'The {} is required'
 KEY_NOT_ALLOWED_MSG = 'The {} is not allowed'
 NOT_INTEGER_MSG = 'The {} must be a positive integer'
+NOT_FLOAT_MSG = 'The {} must be a float number'
 
 # Users
 INVALID_EMAIL_MSG = 'The email provided is not a valid email'
@@ -32,3 +33,6 @@ CATEGORY_NOT_FOUND_MSG = 'Category not found'
 # Types
 TAKEN_TYPE_NAME_MSG = 'The provided type name already exists'
 TYPE_NOT_FOUND_MSG = 'Property type not found'
+
+# Properties
+PROPERTY_NOT_FOUND_MSG = 'Property not found'

@@ -9,7 +9,7 @@ from ..utils.validators import get_error_body
 from ..utils.helpers.messages.error import (UNAUTHORIZED_MSG)
 
 
-def permission_required(func):
+def admin_permission_required(func):
     """ Permission decorator. Validates if user is allowed to perform action
 
         Args:

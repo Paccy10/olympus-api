@@ -50,3 +50,16 @@ class PropertyResource(Resource):
         }
 
         return Response.success(PROPERTY_CREATED_MSG, response_data, 201)
+
+    @property_namespace.doc(responses=get_responses(200))
+    def get(self):
+        """ Endpoint to get all properties """
+
+        property_schema = PropertySchema(many=True)
+        properties = Property.query.filter(Property.is_published).all()
+        properties_data = property_schema.dump(properties)
+        response = {
+            'properties': properties_data
+        }
+
+        return Response.success(PROPERTIES_FETCHED_MSG, response, 200)

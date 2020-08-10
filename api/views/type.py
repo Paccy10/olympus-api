@@ -4,7 +4,7 @@ from flask import request
 from flask_restx import Resource
 
 from ..middlewares.token_required import token_required
-from ..middlewares.permission_required import permission_required
+from ..middlewares.permission_required import admin_permission_required
 from ..utils.helpers import request_data_strip
 from ..utils.helpers import get_error_body
 from ..utils.helpers.swagger.collections import type_namespace
@@ -27,7 +27,7 @@ class TypeResource(Resource):
     """" Resource class for property types endpoints """
 
     @token_required
-    @permission_required
+    @admin_permission_required
     @type_namespace.expect(type_model)
     @type_namespace.doc(responses=get_responses(201, 400, 401, 403, 409))
     def post(self):
@@ -81,7 +81,7 @@ class SingleTypeResource(Resource):
         return Response.success(TYPE_FETCHED_MSG, response, 200)
 
     @token_required
-    @permission_required
+    @admin_permission_required
     @type_namespace.expect(type_model)
     @type_namespace.doc(responses=get_responses(200, 400, 401, 403, 404, 409))
     def put(self, name):
@@ -105,7 +105,7 @@ class SingleTypeResource(Resource):
         return Response.success(TYPE_UPDATED_MSG, response, 200)
 
     @token_required
-    @permission_required
+    @admin_permission_required
     @type_namespace.doc(responses=get_responses(200, 401, 403, 404))
     def delete(self, name):
         """ Endpoint to delete type """

@@ -18,6 +18,7 @@ from ..utils.helpers.messages.success import (PROPERTY_CREATED_MSG,
 from ..utils.helpers.messages.error import (PROPERTY_NOT_FOUND_MSG)
 from ..utils.validators.property import PropertyValidators
 from ..utils.upload_image import upload_image
+from ..utils.pagination_handler import paginate_resource
 from ..models.property import Property
 from ..schemas.property import PropertySchema
 
@@ -56,10 +57,12 @@ class PropertyResource(Resource):
         """ Endpoint to get all properties """
 
         property_schema = PropertySchema(many=True)
-        properties = Property.query.filter(Property.is_published).all()
-        properties_data = property_schema.dump(properties)
+        condition = Property.is_published
+        properties, metadata = paginate_resource(
+            Property, property_schema, condition)
         response = {
-            'properties': properties_data
+            'properties': properties,
+            'metadata': metadata
         }
 
         return Response.success(PROPERTIES_FETCHED_MSG, response, 200)

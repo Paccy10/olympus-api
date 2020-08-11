@@ -133,7 +133,7 @@ def validate_request_body(body, keys):
         raise_bad_request_error(errors)
 
 
-def validate_positive_integer(key, value):
+def validate_positive_integer(key, value, location='body'):
     """
     Checks if the provided value is a positive integer
 
@@ -144,12 +144,12 @@ def validate_positive_integer(key, value):
     """
 
     try:
-        if int(value) < 0:
+        if int(value) <= 0:
             raise_bad_request_error(
-                [get_error_body(value, NOT_INTEGER_MSG.format(key), key)])
+                [get_error_body(value, NOT_INTEGER_MSG.format(key), key, location)])
     except ValueError:
         raise_bad_request_error(
-            [get_error_body(value, NOT_INTEGER_MSG.format(key), key)])
+            [get_error_body(value, NOT_INTEGER_MSG.format(key), key, location)])
 
 
 def validate_float(key, value):

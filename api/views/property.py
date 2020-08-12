@@ -66,3 +66,26 @@ class PropertyResource(Resource):
         }
 
         return Response.success(PROPERTIES_FETCHED_MSG, response, 200)
+
+
+@property_namespace.route('/<int:property_id>')
+class SinglePropertyResource(Resource):
+    """" Resource class for single property endpoints """
+
+    @property_namespace.doc(responses=get_responses(200, 404))
+    def get(self, property_id):
+        """ Endpoint to get single property """
+
+        _property = Property.query.filter(
+            Property.id == property_id, Property.is_published).first()
+
+        if not _property:
+            return Response.error(
+                [get_error_body(property_id, PROPERTY_NOT_FOUND_MSG, 'property_id', 'url')], 404)
+
+        property_schema = PropertySchema()
+        response = {
+            'property': property_schema.dump(_property)
+        }
+
+        return Response.success(PROPERTY_FETCHED_MSG, response, 200)

@@ -9,7 +9,8 @@ from api.models.database import db
 pytest_plugins = ['tests.fixtures.user',
                   'tests.fixtures.authorization',
                   'tests.fixtures.category',
-                  'tests.fixtures.type']
+                  'tests.fixtures.type',
+                  'tests.fixtures.property']
 
 
 @pytest.fixture(scope='module')

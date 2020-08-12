@@ -75,3 +75,16 @@ INVALID_PROPERTY_WITHOUT_IMAGES = {
     'garages': 1,
     'price': 10000
 }
+
+VALID_UPDATE_PROPERTY = {
+    'title': 'Living house',
+    'summary': '',
+    'address': 'Kigali',
+    'longitude': '123.3435',
+    'latitude': '-234.455',
+    'guests': '2',
+    'beds': '2',
+    'baths': '1',
+    'garages': '1',
+    'price': '10000'
+}

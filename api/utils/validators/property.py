@@ -78,3 +78,19 @@ class PropertyValidators:
 
         for image in request.files.getlist('images'):
             validate_image('images', image)
+
+    @classmethod
+    def validate_update(cls, data: dict):
+        """ Validates the property update """
+
+        cls.validate_property_body(data)
+        cls.validate_category(data.get('category_id'))
+        cls.validate_type(data.get('type_id'))
+        validate_float('longitude', data.get('longitude'))
+        validate_float('latitude', data.get('latitude'))
+        validate_positive_integer('guests', data.get('guests'))
+        validate_positive_integer('beds', data.get('beds'))
+        validate_positive_integer('baths', data.get('baths'))
+
+        if data.get('garages'):
+            validate_positive_integer('garages', data.get('garages'))

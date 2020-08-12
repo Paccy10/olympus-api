@@ -4,6 +4,7 @@ from flask import request
 from flask_restx import Resource
 
 from ..middlewares.token_required import token_required
+from ..middlewares.permission_required import property_owner_permission_required
 from ..utils.helpers import request_data_strip
 from ..utils.helpers import get_error_body
 from ..utils.helpers.swagger.collections import property_namespace
@@ -89,3 +90,24 @@ class SinglePropertyResource(Resource):
         }
 
         return Response.success(PROPERTY_FETCHED_MSG, response, 200)
+
+    @token_required
+    @property_owner_permission_required
+    @property_namespace.expect(property_model)
+    @property_namespace.doc(responses=get_responses(200, 400, 401, 403, 404))
+    def put(self, property_id):
+        """ Endpoint to update property """
+
+        request_data = request_data_strip(request.get_json())
+        PropertyValidators.validate_update(request_data)
+
+        _property = Property.query.filter(
+            Property.id == property_id).first()
+        _property.update(request_data)
+
+        property_schema = PropertySchema()
+        response = {
+            'property': property_schema.dump(_property)
+        }
+
+        return Response.success(PROPERTY_UPDATED_MSG, response, 200)

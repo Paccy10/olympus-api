@@ -3,7 +3,8 @@
 from flask import json
 
 import api.views.property
-from api.utils.helpers.messages.success import (PROPERTY_UPDATED_MSG)
+from api.utils.helpers.messages.success import (PROPERTY_UPDATED_MSG,
+                                                PROPERTY_DELETED_MSG)
 from api.utils.helpers.messages.error import (PROPERTY_NOT_FOUND_MSG,
                                               UNAUTHORIZED_MSG)
 from ...mocks.property import (VALID_UPDATE_PROPERTY)
@@ -84,3 +85,18 @@ class TestUpdateProperty:
         assert response.status_code == 403
         assert response.json['status'] == 'error'
         assert response.json['errors'][0]['message'] == UNAUTHORIZED_MSG
+
+
+class TestDeleteProperty:
+    """ Class for testing delete property endpoint """
+
+    def test_delete_property_succeeds(self, client, init_db, new_property, user_auth_header):
+        """ Testing delete property """
+
+        new_property.save()
+        response = client.delete(
+            f'{API_BASE_URL}/properties/{new_property.id}', headers=user_auth_header)
+
+        assert response.status_code == 200
+        assert response.json['status'] == 'success'
+        assert response.json['message'] == PROPERTY_DELETED_MSG

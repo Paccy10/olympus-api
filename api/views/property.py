@@ -111,3 +111,20 @@ class SinglePropertyResource(Resource):
         }
 
         return Response.success(PROPERTY_UPDATED_MSG, response, 200)
+
+    @token_required
+    @property_owner_permission_required
+    @property_namespace.doc(responses=get_responses(200, 401, 403, 404))
+    def delete(self, property_id):
+        """ Endpoint to delete property """
+
+        _property = Property.query.filter(
+            Property.id == property_id).first()
+        _property.delete()
+
+        property_schema = PropertySchema()
+        response = {
+            'property': property_schema.dump(_property)
+        }
+
+        return Response.success(PROPERTY_DELETED_MSG, response, 200)

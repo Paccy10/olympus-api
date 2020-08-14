@@ -5,7 +5,8 @@ from io import BytesIO
 from flask import json
 
 import api.views.property
-from api.utils.helpers.messages.success import PROPERTY_CREATED_MSG
+from api.utils.helpers.messages.success import (PROPERTY_CREATED_MSG,
+                                                PROPERTY_DELETED_MSG)
 from api.utils.helpers.messages.error import (KEY_REQUIRED_MSG,
                                               KEY_NOT_ALLOWED_MSG,
                                               CATEGORY_NOT_FOUND_MSG,
@@ -160,3 +161,17 @@ class TestCreateProperty:
         assert response.json['status'] == 'error'
         assert response.json['errors'][0]['message'] == KEY_REQUIRED_MSG.format(
             'images')
+
+
+class TestDeleteProperty:
+    """ Class for testing delete property endpoint """
+
+    def test_delete_property_succeeds(self, client, init_db, admin_auth_header):
+        """ Testing delete property """
+
+        response = client.delete(
+            f'{API_BASE_URL}/properties/1', headers=admin_auth_header)
+
+        assert response.status_code == 200
+        assert response.json['status'] == 'success'
+        assert response.json['message'] == PROPERTY_DELETED_MSG

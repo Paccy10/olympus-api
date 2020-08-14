@@ -19,7 +19,7 @@ from ..utils.helpers.messages.success import (PROPERTY_CREATED_MSG,
                                               PROPERTY_DELETED_MSG)
 from ..utils.helpers.messages.error import (PROPERTY_NOT_FOUND_MSG)
 from ..utils.validators.property import PropertyValidators
-from ..utils.upload_image import upload_image
+from ..utils.upload_image import upload_image, destroy_image
 from ..utils.pagination_handler import paginate_resource
 from ..models.property import Property
 from ..schemas.property import PropertySchema
@@ -121,6 +121,10 @@ class SinglePropertyResource(Resource):
 
         _property = Property.query.filter(
             Property.id == property_id).first()
+
+        for image in _property.images:
+            destroy_image(image['public_id'])
+
         _property.delete()
 
         property_schema = PropertySchema()

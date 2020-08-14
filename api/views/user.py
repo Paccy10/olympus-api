@@ -4,6 +4,7 @@ from flask import request
 from flask_restx import Resource
 
 from ..middlewares.token_required import token_required
+from ..middlewares.permission_required import admin_permission_required
 from ..utils.helpers import request_data_strip
 from ..utils.helpers import get_error_body
 from ..utils.helpers.swagger.collections import user_namespace
@@ -20,7 +21,8 @@ from ..utils.helpers.messages.success import (USER_CREATED_MSG,
                                               PASSWORD_RESET_LINK_SENT_MSG,
                                               PASSWORD_UPDATED_MSG,
                                               PROFILE_UPDATED_MSG,
-                                              PROFILE_FETCHED_MSG)
+                                              PROFILE_FETCHED_MSG,
+                                              PROPERTIES_FETCHED_MSG)
 from ..utils.helpers.messages.error import (INVALID_USER_TOKEN_MSG,
                                             ALREADY_VERIFIED_MSG,
                                             INVALID_CREDENTIALS,
@@ -30,8 +32,11 @@ from ..utils.validators.user import UserValidators
 from ..utils.send_email import send_email
 from ..utils.tokens_handler import verify_user_token, generate_auth_token
 from ..utils.upload_image import upload_image, destroy_image
+from ..utils.pagination_handler import paginate_resource
 from ..models.user import User
+from ..models.property import Property
 from ..schemas.user import UserSchema
+from ..schemas.property import PropertySchema
 
 
 @user_namespace.route('/signup')
@@ -240,3 +245,25 @@ class SingleUserProfileResource(Resource):
         }
 
         return Response.success(PROFILE_FETCHED_MSG, response_data, 200)
+
+
+@user_namespace.route('/profile/properties')
+class UserPropertiesResource(Resource):
+    """" Resource class for user properties """
+
+    @token_required
+    @user_namespace.doc(responses=get_responses(200, 401))
+    def get(self):
+        """ Endpoint to get user properties """
+
+        user_id = request.decoded_token['user']['id']
+        property_schema = PropertySchema(many=True)
+        condition = Property.owner_id == user_id
+        properties, metadata = paginate_resource(
+            Property, property_schema, condition)
+        response = {
+            'properties': properties,
+            'metadata': metadata
+        }
+
+        return Response.success(PROPERTIES_FETCHED_MSG, response, 200)

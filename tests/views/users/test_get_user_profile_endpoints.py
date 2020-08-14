@@ -1,7 +1,8 @@
 """ Module for testing get user profile endpoints """
 
 import api.views.user
-from api.utils.helpers.messages.success import PROFILE_FETCHED_MSG
+from api.utils.helpers.messages.success import (PROFILE_FETCHED_MSG,
+                                                PROPERTIES_FETCHED_MSG)
 from api.utils.helpers.messages.error import (USER_NOT_FOUND_MSG)
 from ...constants import API_BASE_URL
 
@@ -42,3 +43,14 @@ class TestGetUserProfile:
         assert response.status_code == 404
         assert response.json['status'] == 'error'
         assert response.json['errors'][0]['message'] == USER_NOT_FOUND_MSG
+
+    def test_get_user_properties_succeeds(self, client, init_db, user_auth_header):
+        """ Testing get user properties """
+
+        response = client.get(f'{API_BASE_URL}/users/profile/properties',
+                              headers=user_auth_header)
+
+        assert response.status_code == 200
+        assert response.json['status'] == 'success'
+        assert response.json['message'] == PROPERTIES_FETCHED_MSG
+        assert 'properties' in response.json['data']

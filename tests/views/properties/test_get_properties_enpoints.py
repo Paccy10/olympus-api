@@ -10,8 +10,8 @@ from ...constants import API_BASE_URL
 class TestGetPropertiesEndpoints:
     """ Class for testing get properties endpoints """
 
-    def test_get_all_properties_succeeds(self, client, init_db):
-        """ Testing get all properties """
+    def test_get_published_properties_succeeds(self, client, init_db):
+        """ Testing get all published properties """
 
         response = client.get(f'{API_BASE_URL}/properties')
 
@@ -40,3 +40,14 @@ class TestGetPropertiesEndpoints:
         assert response.status_code == 404
         assert response.json['status'] == 'error'
         assert response.json['errors'][0]['message'] == PROPERTY_NOT_FOUND_MSG
+
+    def test_get_all_properties_succeeds(self, client, init_db, admin_auth_header):
+        """ Testing get all properties """
+
+        response = client.get(f'{API_BASE_URL}/properties/all',
+                              headers=admin_auth_header)
+
+        assert response.status_code == 200
+        assert response.json['status'] == 'success'
+        assert response.json['message'] == PROPERTIES_FETCHED_MSG
+        assert 'properties' in response.json['data']

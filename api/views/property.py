@@ -4,7 +4,8 @@ from flask import request
 from flask_restx import Resource
 
 from ..middlewares.token_required import token_required
-from ..middlewares.permission_required import property_owner_permission_required
+from ..middlewares.permission_required import (property_owner_permission_required,
+                                               admin_permission_required)
 from ..utils.helpers import request_data_strip
 from ..utils.helpers import get_error_body
 from ..utils.helpers.swagger.collections import property_namespace
@@ -55,7 +56,7 @@ class PropertyResource(Resource):
 
     @property_namespace.doc(responses=get_responses(200))
     def get(self):
-        """ Endpoint to get all properties """
+        """ Endpoint to fetch published properties """
 
         property_schema = PropertySchema(many=True)
         condition = Property.is_published
@@ -128,3 +129,24 @@ class SinglePropertyResource(Resource):
         }
 
         return Response.success(PROPERTY_DELETED_MSG, response, 200)
+
+
+@property_namespace.route('/all')
+class AllPropertiesResource(Resource):
+    """" Resource class for all properties endpoint """
+
+    @token_required
+    @admin_permission_required
+    @property_namespace.doc(responses=get_responses(200, 401, 403))
+    def get(self):
+        """ Endpoint to fetch all properties """
+
+        property_schema = PropertySchema(many=True)
+        properties, metadata = paginate_resource(
+            Property, property_schema, True)
+        response = {
+            'properties': properties,
+            'metadata': metadata
+        }
+
+        return Response.success(PROPERTIES_FETCHED_MSG, response, 200)

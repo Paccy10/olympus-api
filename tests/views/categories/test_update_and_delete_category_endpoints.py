@@ -73,7 +73,7 @@ class TestUpdateCategory:
             f'{API_BASE_URL}/categories/{new_category.name}',
             data=category_data, headers=admin_auth_header)
 
-        assert response.status_code == 400
+        assert response.status_code == 404
         assert response.json['status'] == 'error'
         assert response.json['errors'][0]['message'] == CATEGORY_NOT_FOUND_MSG
 

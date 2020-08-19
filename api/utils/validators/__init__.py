@@ -1,14 +1,16 @@
 """" Module for common validators """
 
+from datetime import datetime
 from flask import request
-from werkzeug.exceptions import BadRequest, Conflict, Unauthorized
+from werkzeug.exceptions import BadRequest, Conflict, Unauthorized, NotFound
 
 from ..helpers import get_error_body
 from ..helpers.messages.error import (KEY_REQUIRED_MSG,
                                       KEY_NOT_ALLOWED_MSG,
                                       NOT_IMAGE_EXT_MSG,
                                       NOT_INTEGER_MSG,
-                                      NOT_FLOAT_MSG)
+                                      NOT_FLOAT_MSG,
+                                      INCORRECT_DATE_FORMAT)
 
 
 def raise_bad_request_error(errors):
@@ -22,6 +24,24 @@ def raise_bad_request_error(errors):
     """
 
     error = BadRequest()
+    error.data = {
+        'status': 'error',
+        'errors': errors
+    }
+    raise error
+
+
+def raise_not_found_error(errors):
+    """
+    Raises not found error
+
+    Args:
+        errors (list): list of errors
+    Raises:
+        (ValidationError): raise an exception
+    """
+
+    error = NotFound()
     error.data = {
         'status': 'error',
         'errors': errors
@@ -167,3 +187,20 @@ def validate_float(key, value):
     except ValueError:
         raise_bad_request_error(
             [get_error_body(value, NOT_FLOAT_MSG.format(key), key)])
+
+
+def validate_date(key, date):
+    """
+    Checks if the provided date is a valid date
+
+    Args:
+        date (str): date
+    Raises:
+        (ValidationError): raises an exception if the date is not a valid date format
+    """
+
+    try:
+        datetime.strptime(date, '%Y-%m-%d')
+    except ValueError:
+        raise_bad_request_error(
+            [get_error_body(date, INCORRECT_DATE_FORMAT, key)])

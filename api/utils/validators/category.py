@@ -4,6 +4,7 @@ from flask import request
 
 from . import (raise_bad_request_error,
                raise_conflict_error,
+               raise_not_found_error,
                validate_request_body,
                validate_positive_integer,
                check_not_allowed_params)
@@ -44,7 +45,7 @@ class CategoryValidators:
         category = Category.find_by_id(parent_id)
 
         if not category:
-            raise_bad_request_error(
+            raise_not_found_error(
                 [get_error_body(parent_id, CATEGORY_NOT_FOUND_MSG, 'parent_id')])
 
     @classmethod

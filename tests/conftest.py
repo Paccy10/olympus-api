@@ -10,7 +10,8 @@ pytest_plugins = ['tests.fixtures.user',
                   'tests.fixtures.authorization',
                   'tests.fixtures.category',
                   'tests.fixtures.type',
-                  'tests.fixtures.property']
+                  'tests.fixtures.property',
+                  'tests.fixtures.booking']
 
 
 @pytest.fixture(scope='module')

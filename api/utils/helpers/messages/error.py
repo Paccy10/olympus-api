@@ -5,6 +5,7 @@ KEY_REQUIRED_MSG = 'The {} is required'
 KEY_NOT_ALLOWED_MSG = 'The {} is not allowed'
 NOT_INTEGER_MSG = 'The {} must be a positive integer'
 NOT_FLOAT_MSG = 'The {} must be a float number'
+INCORRECT_DATE_FORMAT = 'Incorrect date format, it should be YYYY-MM-DD'
 
 # Users
 INVALID_EMAIL_MSG = 'The email provided is not a valid email'
@@ -36,3 +37,8 @@ TYPE_NOT_FOUND_MSG = 'Property type not found'
 
 # Properties
 PROPERTY_NOT_FOUND_MSG = 'Property not found'
+PROPERTY_NOT_AVAILABLE = 'Property not available for booking'
+
+# Bookings
+CHECKIN_DATE_MSG = 'checkin_date must be a present or future date'
+CHECKOUT_DATE_MSG = 'checkout_date must be greater than checkin_date'

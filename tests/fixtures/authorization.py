@@ -1,6 +1,7 @@
 """ Module for authorization fixtures """
 
 import pytest
+
 from api.schemas.user import UserSchema
 from api.utils.tokens_handler import generate_auth_token
 

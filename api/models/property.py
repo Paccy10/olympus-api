@@ -27,5 +27,10 @@ class Property(BaseModel):
     images = db.Column(ARRAY(JSON), nullable=False)
     video = db.Column(db.String, nullable=True)
     price = db.Column(db.DECIMAL(12, 2), nullable=False)
-    availability = db.Column(db.Boolean, default=True, nullable=False)
     is_published = db.Column(db.Boolean, default=False, nullable=False)
+
+    owner = db.relationship('User', backref='property_owner', lazy='joined')
+    category = db.relationship(
+        'Category', backref='property_category', lazy='joined')
+    property_type = db.relationship(
+        'Type', backref='property_type', lazy='joined')

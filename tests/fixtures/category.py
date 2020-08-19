@@ -1,6 +1,7 @@
 """ Module for category fixtures """
 
 import pytest
+
 from api.models.category import Category
 
 

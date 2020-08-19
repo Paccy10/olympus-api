@@ -30,3 +30,6 @@ PROPERTIES_FETCHED_MSG = 'Properties successfully fetched'
 PROPERTY_FETCHED_MSG = 'Property successfully fetched'
 PROPERTY_UPDATED_MSG = 'Property successfully updated'
 PROPERTY_DELETED_MSG = 'Property successfully deleted'
+
+# Bookings
+BOOKING_CREATED_MSG = 'Property successfully booked'

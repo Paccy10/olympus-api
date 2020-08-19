@@ -4,6 +4,7 @@ from flask import request
 
 from . import (raise_bad_request_error,
                raise_conflict_error,
+               raise_not_found_error,
                validate_request_body,
                validate_positive_integer,
                validate_float,
@@ -41,7 +42,7 @@ class PropertyValidators:
         category = Category.find_by_id(category_id)
 
         if not category:
-            raise_bad_request_error(
+            raise_not_found_error(
                 [get_error_body(category_id, CATEGORY_NOT_FOUND_MSG, 'category_id')])
 
     @classmethod

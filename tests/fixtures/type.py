@@ -1,6 +1,7 @@
 """ Module for type fixtures """
 
 import pytest
+
 from api.models.type import Type
 
 

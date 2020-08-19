@@ -1,6 +1,7 @@
 """ Module for user fixtures """
 
 import pytest
+
 from api.models.user import User
 from api.utils.helpers.passwords_handler import hash_password
 

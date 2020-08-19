@@ -1,5 +1,6 @@
 """ Module for properties endpoints """
 
+from datetime import datetime
 from flask import request
 from flask_restx import Resource
 
@@ -11,18 +12,24 @@ from ..utils.helpers import get_error_body
 from ..utils.helpers.swagger.collections import property_namespace
 from ..utils.helpers.swagger.responses import get_responses
 from ..utils.helpers.swagger.models.property import (property_model)
+from ..utils.helpers.swagger.models.booking import (booking_model)
 from ..utils.helpers.response import Response
 from ..utils.helpers.messages.success import (PROPERTY_CREATED_MSG,
                                               PROPERTIES_FETCHED_MSG,
                                               PROPERTY_FETCHED_MSG,
                                               PROPERTY_UPDATED_MSG,
-                                              PROPERTY_DELETED_MSG)
+                                              PROPERTY_DELETED_MSG,
+                                              BOOKING_CREATED_MSG)
 from ..utils.helpers.messages.error import (PROPERTY_NOT_FOUND_MSG)
+from ..utils.helpers.constants import DATE_FORMAT
 from ..utils.validators.property import PropertyValidators
+from ..utils.validators.booking import BookingValidators
 from ..utils.upload_image import upload_image, destroy_image
 from ..utils.pagination_handler import paginate_resource
 from ..models.property import Property
+from ..models.booking import Booking
 from ..schemas.property import PropertySchema
+from ..schemas.booking import BookingSchema
 
 
 @property_namespace.route('')
@@ -154,3 +161,41 @@ class AllPropertiesResource(Resource):
         }
 
         return Response.success(PROPERTIES_FETCHED_MSG, response, 200)
+
+
+@property_namespace.route('/<int:property_id>/book')
+class BookPropertyResource(Resource):
+    """" Resource class for booking a property endpoint """
+
+    @token_required
+    @property_namespace.doc(responses=get_responses(200, 401, 404))
+    def post(self, property_id):
+        """ Endpoint to book a property """
+
+        request_data = request_data_strip(request.get_json())
+        BookingValidators.validate_property(property_id)
+        BookingValidators.validate_create(request_data)
+
+        _property = Property.query.filter(Property.id == property_id).first()
+        user_id = request.decoded_token['user']['id']
+        checkin_date = datetime.strptime(
+            request_data['checkin_date'], DATE_FORMAT)
+        checkout_date = datetime.strptime(
+            request_data['checkout_date'], DATE_FORMAT)
+        days_of_stay = abs((checkout_date - checkin_date).days)
+        price = _property.price * days_of_stay
+
+        request_data['user_id'] = user_id
+        request_data['property_id'] = property_id
+        request_data['checkin_date'] = checkin_date
+        request_data['checkout_date'] = checkout_date
+        request_data['price'] = price
+
+        new_booking = Booking(**request_data)
+        new_booking.save()
+        booking_schema = BookingSchema()
+        response_data = {
+            'booking': booking_schema.dump(new_booking)
+        }
+
+        return Response.success(BOOKING_CREATED_MSG, response_data, 201)

@@ -39,6 +39,7 @@ TYPE_NOT_FOUND_MSG = 'Property type not found'
 PROPERTY_NOT_FOUND_MSG = 'Property not found'
 PROPERTY_NOT_AVAILABLE_MSG = 'Property not available for booking'
 PROPERTY_ALREADY_PUBLISHED_MSG = 'Property already published'
+PROPERTY_ALREADY_UNPUBLISHED_MSG = 'Property already unpublished'
 
 # Bookings
 CHECKIN_DATE_MSG = 'checkin_date must be a present or future date'

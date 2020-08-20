@@ -20,9 +20,11 @@ from ..utils.helpers.messages.success import (PROPERTY_CREATED_MSG,
                                               PROPERTY_UPDATED_MSG,
                                               PROPERTY_DELETED_MSG,
                                               PROPERTY_PUBLISHED_MSG,
+                                              PROPERTY_UNPUBLISHED_MSG,
                                               BOOKING_CREATED_MSG)
 from ..utils.helpers.messages.error import (PROPERTY_NOT_FOUND_MSG,
-                                            PROPERTY_ALREADY_PUBLISHED_MSG)
+                                            PROPERTY_ALREADY_PUBLISHED_MSG,
+                                            PROPERTY_ALREADY_UNPUBLISHED_MSG)
 from ..utils.helpers.constants import DATE_FORMAT
 from ..utils.validators.property import PropertyValidators
 from ..utils.validators.booking import BookingValidators
@@ -190,6 +192,33 @@ class PublishPropertyResource(Resource):
         }
 
         return Response.success(PROPERTY_PUBLISHED_MSG, response, 200)
+
+
+@property_namespace.route('/<int:property_id>/unpublish')
+class UnpublishPropertyResource(Resource):
+    """" Resource class for unpublishing a property endpoint """
+
+    @token_required
+    @property_owner_permission_required
+    @property_namespace.doc(responses=get_responses(200, 401, 403, 404))
+    def patch(self, property_id):
+        """ Endpoint to unpublish a property """
+
+        _property = Property.query.filter(
+            Property.id == property_id).first()
+
+        if not _property.is_published:
+            return Response.error(
+                [get_error_body(property_id,
+                                PROPERTY_ALREADY_UNPUBLISHED_MSG, 'property_id', 'url')], 400)
+
+        _property.update({'is_published': False})
+        property_schema = PropertySchema()
+        response = {
+            'property': property_schema.dump(_property)
+        }
+
+        return Response.success(PROPERTY_UNPUBLISHED_MSG, response, 200)
 
 
 @property_namespace.route('/<int:property_id>/book')

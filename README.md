@@ -77,3 +77,11 @@ flask db upgrade
 ```
 flask run
 ```
+
+- Running tests and generating report
+
+```
+pytest
+```
+
+To further view the lines not tested or covered if there is any, an `htmlcov` directory will be created, get the `index.html` file by entering the directory and view it in your browser.

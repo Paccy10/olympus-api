@@ -5,7 +5,7 @@ KEY_REQUIRED_MSG = 'The {} is required'
 KEY_NOT_ALLOWED_MSG = 'The {} is not allowed'
 NOT_INTEGER_MSG = 'The {} must be a positive integer'
 NOT_FLOAT_MSG = 'The {} must be a float number'
-INCORRECT_DATE_FORMAT = 'Incorrect date format, it should be YYYY-MM-DD'
+INCORRECT_DATE_FORMAT_MSG = 'Incorrect date format, it should be YYYY-MM-DD'
 
 # Users
 INVALID_EMAIL_MSG = 'The email provided is not a valid email'
@@ -17,7 +17,7 @@ TAKEN_USERNAME_MSG = 'The provided username already exists'
 INVALID_USER_TOKEN_MSG = 'The user verification token has expired'
 ALREADY_VERIFIED_MSG = 'User account already verified'
 USER_NOT_FOUND_MSG = 'User account not found'
-INVALID_CREDENTIALS = 'Invalid credentials'
+INVALID_CREDENTIALS_MSG = 'Invalid credentials'
 INVALID_PHONE_MSG = 'The phone number provided is not a valid phone number'
 TAKEN_PHONE_MSG = 'The provided phone number is already taken'
 NO_AUTH_TOKEN_MSG = 'No authorization token provided'
@@ -37,7 +37,8 @@ TYPE_NOT_FOUND_MSG = 'Property type not found'
 
 # Properties
 PROPERTY_NOT_FOUND_MSG = 'Property not found'
-PROPERTY_NOT_AVAILABLE = 'Property not available for booking'
+PROPERTY_NOT_AVAILABLE_MSG = 'Property not available for booking'
+PROPERTY_ALREADY_PUBLISHED_MSG = 'Property already published'
 
 # Bookings
 CHECKIN_DATE_MSG = 'checkin_date must be a present or future date'

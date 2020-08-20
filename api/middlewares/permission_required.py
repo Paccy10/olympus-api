@@ -45,7 +45,7 @@ def property_owner_permission_required(func):
     def decorated(*args, **kwargs):
         decoded_token = request.decoded_token
         user = User.find_by_id(decoded_token['user']['id'])
-        property_id = request.path.split('/')[-1]
+        property_id = request.path.split('/')[4]
         _property = Property.query.filter(
             Property.id == property_id).first()
 

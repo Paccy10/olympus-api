@@ -22,7 +22,8 @@ from ..utils.helpers.messages.success import (USER_CREATED_MSG,
                                               PASSWORD_UPDATED_MSG,
                                               PROFILE_UPDATED_MSG,
                                               PROFILE_FETCHED_MSG,
-                                              PROPERTIES_FETCHED_MSG)
+                                              PROPERTIES_FETCHED_MSG,
+                                              USERS_FETCHED_MSG)
 from ..utils.helpers.messages.error import (INVALID_USER_TOKEN_MSG,
                                             ALREADY_VERIFIED_MSG,
                                             INVALID_CREDENTIALS_MSG,
@@ -267,3 +268,23 @@ class UserPropertiesResource(Resource):
         }
 
         return Response.success(PROPERTIES_FETCHED_MSG, response, 200)
+
+
+@user_namespace.route('')
+class UserResource(Resource):
+    """" Resource class for users """
+
+    @token_required
+    @admin_permission_required
+    @user_namespace.doc(responses=get_responses(200, 401, 403))
+    def get(self):
+        """ Endpoint to fetch all users """
+
+        user_schema = UserSchema(many=True, exclude=['password'])
+        users, metadata = paginate_resource(User, user_schema, True)
+        response = {
+            'users': users,
+            'metadata': metadata
+        }
+
+        return Response.success(USERS_FETCHED_MSG, response, 200)

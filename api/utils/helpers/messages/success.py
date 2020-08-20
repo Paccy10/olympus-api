@@ -36,3 +36,4 @@ PROPERTY_UNPUBLISHED_MSG = 'Property successfully unpublished'
 
 # Bookings
 BOOKING_CREATED_MSG = 'Property successfully booked'
+BOOKINGS_FETCHED_MSG = 'Bookings successfully fetched'

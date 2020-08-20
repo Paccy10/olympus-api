@@ -17,6 +17,7 @@ import api.views.user
 import api.views.category
 import api.views.type
 import api.views.property
+import api.views.booking
 
 migrate = Migrate(application, db)
 

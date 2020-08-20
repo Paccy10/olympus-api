@@ -28,3 +28,9 @@ property_namespace = api.namespace(
     description='A Collection of Property related endpoints',
     path='/properties'
 )
+
+booking_namespace = api.namespace(
+    'Bookings',
+    description='A Collection of Booking related endpoints',
+    path='/bookings'
+)

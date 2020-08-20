@@ -9,6 +9,7 @@ PASSWORD_RESET_LINK_SENT_MSG = 'Password reset link successfully sent.'\
 PASSWORD_UPDATED_MSG = 'User password successfully updated'
 PROFILE_UPDATED_MSG = 'User profile successfully updated'
 PROFILE_FETCHED_MSG = 'User profile successfully fetched'
+USERS_FETCHED_MSG = 'Users successfully fetched'
 
 # Categories
 CATEGORY_CREATED_MSG = 'Category successfully created'

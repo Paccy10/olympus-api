@@ -3,8 +3,10 @@
 from flask import json
 
 import api.views.property
-from api.utils.helpers.messages.success import (PROPERTY_PUBLISHED_MSG)
-from api.utils.helpers.messages.error import (PROPERTY_ALREADY_PUBLISHED_MSG)
+from api.utils.helpers.messages.success import (PROPERTY_PUBLISHED_MSG,
+                                                PROPERTY_UNPUBLISHED_MSG)
+from api.utils.helpers.messages.error import (PROPERTY_ALREADY_PUBLISHED_MSG,
+                                              PROPERTY_ALREADY_UNPUBLISHED_MSG)
 from ...constants import API_BASE_URL
 
 
@@ -42,3 +44,39 @@ class TestPublishProperty:
         assert response.status_code == 400
         assert response.json['status'] == 'error'
         assert response.json['errors'][0]['message'] == PROPERTY_ALREADY_PUBLISHED_MSG
+
+
+class TestUnpublishProperty:
+    """ Class for testing unpublish property endpoint """
+
+    def test_unpublish_property_succeeds(self,
+                                         client,
+                                         init_db,
+                                         new_property,
+                                         user_auth_header):
+        """ Testing unpublish property """
+
+        new_property.save()
+        response = client.patch(
+            f'{API_BASE_URL}/properties/{new_property.id}/unpublish',
+            headers=user_auth_header)
+
+        assert response.status_code == 200
+        assert response.json['status'] == 'success'
+        assert response.json['message'] == PROPERTY_UNPUBLISHED_MSG
+
+    def test_publish_already_unpublished_property_fails(self,
+                                                        client,
+                                                        init_db,
+                                                        new_property,
+                                                        user_auth_header):
+        """ Testing unpublish an already unpublished property """
+
+        new_property.save()
+        response = client.patch(
+            f'{API_BASE_URL}/properties/{new_property.id}/unpublish',
+            headers=user_auth_header)
+
+        assert response.status_code == 400
+        assert response.json['status'] == 'error'
+        assert response.json['errors'][0]['message'] == PROPERTY_ALREADY_UNPUBLISHED_MSG

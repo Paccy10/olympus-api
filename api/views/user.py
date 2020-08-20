@@ -25,7 +25,7 @@ from ..utils.helpers.messages.success import (USER_CREATED_MSG,
                                               PROPERTIES_FETCHED_MSG)
 from ..utils.helpers.messages.error import (INVALID_USER_TOKEN_MSG,
                                             ALREADY_VERIFIED_MSG,
-                                            INVALID_CREDENTIALS,
+                                            INVALID_CREDENTIALS_MSG,
                                             USER_NOT_FOUND_MSG)
 from ..utils.helpers.passwords_handler import hash_password, check_password
 from ..utils.validators.user import UserValidators
@@ -113,7 +113,7 @@ class UserLoginResource(Resource):
 
         if not check_password(request_data['password'], user.password):
             return Response.error(
-                [get_error_body(None, INVALID_CREDENTIALS, '')], 404)
+                [get_error_body(None, INVALID_CREDENTIALS_MSG, '')], 404)
 
         user_schema = UserSchema(exclude=['password'])
         user_data = user_schema.dump(user)

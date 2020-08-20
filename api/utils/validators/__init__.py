@@ -10,7 +10,7 @@ from ..helpers.messages.error import (KEY_REQUIRED_MSG,
                                       NOT_IMAGE_EXT_MSG,
                                       NOT_INTEGER_MSG,
                                       NOT_FLOAT_MSG,
-                                      INCORRECT_DATE_FORMAT)
+                                      INCORRECT_DATE_FORMAT_MSG)
 
 
 def raise_bad_request_error(errors):
@@ -203,4 +203,4 @@ def validate_date(key, date):
         datetime.strptime(date, '%Y-%m-%d')
     except ValueError:
         raise_bad_request_error(
-            [get_error_body(date, INCORRECT_DATE_FORMAT, key)])
+            [get_error_body(date, INCORRECT_DATE_FORMAT_MSG, key)])

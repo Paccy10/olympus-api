@@ -5,8 +5,8 @@ from flask import json
 import api.views.property
 from api.utils.helpers.messages.success import BOOKING_CREATED_MSG
 from api.utils.helpers.messages.error import (PROPERTY_NOT_FOUND_MSG,
-                                              PROPERTY_NOT_AVAILABLE,
-                                              INCORRECT_DATE_FORMAT,
+                                              PROPERTY_NOT_AVAILABLE_MSG,
+                                              INCORRECT_DATE_FORMAT_MSG,
                                               CHECKIN_DATE_MSG,
                                               CHECKOUT_DATE_MSG)
 from ...mocks.booking import (VALID_BOOKING,
@@ -60,7 +60,7 @@ class TestCreateBooking:
 
         assert response.status_code == 400
         assert response.json['status'] == 'error'
-        assert response.json['errors'][0]['message'] == PROPERTY_NOT_AVAILABLE
+        assert response.json['errors'][0]['message'] == PROPERTY_NOT_AVAILABLE_MSG
 
     def test_create_booking_with_invalid_dates_fails(self,
                                                      client,
@@ -77,7 +77,7 @@ class TestCreateBooking:
 
         assert response.status_code == 400
         assert response.json['status'] == 'error'
-        assert response.json['errors'][0]['message'] == INCORRECT_DATE_FORMAT
+        assert response.json['errors'][0]['message'] == INCORRECT_DATE_FORMAT_MSG
 
     def test_create_booking_with_past_checkin_date_fails(self,
                                                          client,

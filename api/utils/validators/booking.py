@@ -12,7 +12,7 @@ from ..helpers import get_error_body
 from ..helpers.messages.error import (CHECKIN_DATE_MSG,
                                       CHECKOUT_DATE_MSG,
                                       PROPERTY_NOT_FOUND_MSG,
-                                      PROPERTY_NOT_AVAILABLE)
+                                      PROPERTY_NOT_AVAILABLE_MSG)
 from ..helpers.constants import DATE_FORMAT
 from ..helpers.response import Response
 from ...models.booking import Booking
@@ -38,7 +38,7 @@ class BookingValidators:
 
         if booking:
             raise_bad_request_error(
-                [get_error_body(property_id, PROPERTY_NOT_AVAILABLE, 'property_id', 'url')])
+                [get_error_body(property_id, PROPERTY_NOT_AVAILABLE_MSG, 'property_id', 'url')])
 
     @classmethod
     def validate_create(cls, data: dict):

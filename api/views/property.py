@@ -19,8 +19,10 @@ from ..utils.helpers.messages.success import (PROPERTY_CREATED_MSG,
                                               PROPERTY_FETCHED_MSG,
                                               PROPERTY_UPDATED_MSG,
                                               PROPERTY_DELETED_MSG,
+                                              PROPERTY_PUBLISHED_MSG,
                                               BOOKING_CREATED_MSG)
-from ..utils.helpers.messages.error import (PROPERTY_NOT_FOUND_MSG)
+from ..utils.helpers.messages.error import (PROPERTY_NOT_FOUND_MSG,
+                                            PROPERTY_ALREADY_PUBLISHED_MSG)
 from ..utils.helpers.constants import DATE_FORMAT
 from ..utils.validators.property import PropertyValidators
 from ..utils.validators.booking import BookingValidators
@@ -161,6 +163,33 @@ class AllPropertiesResource(Resource):
         }
 
         return Response.success(PROPERTIES_FETCHED_MSG, response, 200)
+
+
+@property_namespace.route('/<int:property_id>/publish')
+class PublishPropertyResource(Resource):
+    """" Resource class for publishing a property endpoint """
+
+    @token_required
+    @property_owner_permission_required
+    @property_namespace.doc(responses=get_responses(200, 401, 403, 404))
+    def patch(self, property_id):
+        """ Endpoint to publish a property """
+
+        _property = Property.query.filter(
+            Property.id == property_id).first()
+
+        if _property.is_published:
+            return Response.error(
+                [get_error_body(property_id,
+                                PROPERTY_ALREADY_PUBLISHED_MSG, 'property_id', 'url')], 400)
+
+        _property.update({'is_published': True})
+        property_schema = PropertySchema()
+        response = {
+            'property': property_schema.dump(_property)
+        }
+
+        return Response.success(PROPERTY_PUBLISHED_MSG, response, 200)
 
 
 @property_namespace.route('/<int:property_id>/book')

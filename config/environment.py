@@ -19,6 +19,13 @@ class Config(object):
     MAIL_USE_TLS = getenv('MAIL_USE_TLS')
 
 
+class ProductionConfig(Config):
+    """ App testing configurations """
+
+    SQLALCHEMY_DATABASE_URI = getenv('DATABASE_URL')
+    FLASK_ENV = 'production'
+
+
 class DevelopmentConfig(Config):
     """ App Development configurations """
 
@@ -30,14 +37,14 @@ class DevelopmentConfig(Config):
 class TestingConfig(Config):
     """ App testing configurations """
 
-    PORT = 4000
     SQLALCHEMY_DATABASE_URI = getenv('TEST_DATABASE_URL')
     FLASK_ENV = 'testing'
 
 
 config = {
     'development': DevelopmentConfig,
-    'testing': TestingConfig
+    'testing': TestingConfig,
+    'production': ProductionConfig
 }
 
 AppConfig = TestingConfig if 'pytest' in sys.modules else config.get(

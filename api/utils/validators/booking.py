@@ -23,7 +23,7 @@ class BookingValidators:
     """ Booking validators class """
 
     @classmethod
-    def validate_property(cls, property_id):
+    def validate_property(cls, property_id, checkin_date):
         """ Validates the booking property """
 
         _property = Property.query.filter(
@@ -36,7 +36,7 @@ class BookingValidators:
         booking = Booking.query.filter(
             Booking.property_id == property_id, Booking.status == 'open').first()
 
-        if booking:
+        if booking and booking.checkout_date >= checkin_date:
             raise_bad_request_error(
                 [get_error_body(property_id, PROPERTY_NOT_AVAILABLE_MSG, 'property_id', 'url')])
 

@@ -74,7 +74,7 @@ class TestCreateBooking:
         response = client.post(
             f'{API_BASE_URL}/properties/{another_property.id}/book',
             data=booking_data, headers=user_auth_header)
-
+        print(response.json)
         assert response.status_code == 400
         assert response.json['status'] == 'error'
         assert response.json['errors'][0]['message'] == INCORRECT_DATE_FORMAT_MSG

@@ -231,15 +231,15 @@ class BookPropertyResource(Resource):
         """ Endpoint to book a property """
 
         request_data = request_data_strip(request.get_json())
-        BookingValidators.validate_property(property_id)
         BookingValidators.validate_create(request_data)
-
-        _property = Property.query.filter(Property.id == property_id).first()
-        user_id = request.decoded_token['user']['id']
         checkin_date = datetime.strptime(
             request_data['checkin_date'], DATE_FORMAT)
         checkout_date = datetime.strptime(
             request_data['checkout_date'], DATE_FORMAT)
+        BookingValidators.validate_property(property_id, checkin_date)
+
+        _property = Property.query.filter(Property.id == property_id).first()
+        user_id = request.decoded_token['user']['id']
         days_of_stay = abs((checkout_date - checkin_date).days)
         price = _property.price * days_of_stay
 

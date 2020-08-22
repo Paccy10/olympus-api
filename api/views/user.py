@@ -23,7 +23,8 @@ from ..utils.helpers.messages.success import (USER_CREATED_MSG,
                                               PROFILE_UPDATED_MSG,
                                               PROFILE_FETCHED_MSG,
                                               PROPERTIES_FETCHED_MSG,
-                                              USERS_FETCHED_MSG)
+                                              USERS_FETCHED_MSG,
+                                              BOOKINGS_FETCHED_MSG)
 from ..utils.helpers.messages.error import (INVALID_USER_TOKEN_MSG,
                                             ALREADY_VERIFIED_MSG,
                                             INVALID_CREDENTIALS_MSG,
@@ -36,8 +37,10 @@ from ..utils.upload_image import upload_image, destroy_image
 from ..utils.pagination_handler import paginate_resource
 from ..models.user import User
 from ..models.property import Property
+from ..models.booking import Booking
 from ..schemas.user import UserSchema
 from ..schemas.property import PropertySchema
+from ..schemas.booking import BookingSchema
 
 
 @user_namespace.route('/signup')
@@ -268,6 +271,27 @@ class UserPropertiesResource(Resource):
         }
 
         return Response.success(PROPERTIES_FETCHED_MSG, response, 200)
+
+
+@user_namespace.route('/profile/bookings')
+class UserBookingsResource(Resource):
+    """" Resource class for user bookings """
+
+    @token_required
+    @user_namespace.doc(responses=get_responses(200, 401))
+    def get(self):
+        """ Endpoint to get user bookings """
+
+        user_id = request.decoded_token['user']['id']
+        booking_schema = BookingSchema(many=True)
+        bookings = Booking.query.filter(
+            Booking.user_id == user_id).order_by(Booking.created_at.desc())
+
+        response = {
+            'bookings': booking_schema.dump(bookings),
+        }
+
+        return Response.success(BOOKINGS_FETCHED_MSG, response, 200)
 
 
 @user_namespace.route('')

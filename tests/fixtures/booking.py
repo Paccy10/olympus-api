@@ -18,3 +18,15 @@ def new_booking(init_db, new_property, new_user):
                    checkin_date=datetime.strptime('2025-01-01', DATE_FORMAT),
                    checkout_date=datetime.strptime('2025-01-05', DATE_FORMAT),
                    price='50000')
+
+
+@pytest.fixture(scope='module')
+def another_booking(init_db, new_property, another_user):
+    """ New property fixture """
+    another_user.save()
+    new_property.save()
+    return Booking(user_id=another_user.id,
+                   property_id=new_property.id,
+                   checkin_date=datetime.strptime('2025-01-01', DATE_FORMAT),
+                   checkout_date=datetime.strptime('2025-01-05', DATE_FORMAT),
+                   price='50000')

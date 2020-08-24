@@ -44,3 +44,4 @@ PROPERTY_ALREADY_UNPUBLISHED_MSG = 'Property already unpublished'
 # Bookings
 CHECKIN_DATE_MSG = 'checkin_date must be a present or future date'
 CHECKOUT_DATE_MSG = 'checkout_date must be greater than checkin_date'
+BOOKING_NOT_FOUND_MSG = 'Booking not found'

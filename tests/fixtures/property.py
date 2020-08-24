@@ -11,7 +11,7 @@ def new_property(init_db, new_user, new_category, new_type):
     new_user.save()
     new_category.save()
     new_type.save()
-    return Property(owner_id=new_user.id,
+    return Property(user_id=new_user.id,
                     category_id=new_category.id,
                     type_id=new_type.id,
                     title='test property',
@@ -33,7 +33,7 @@ def another_property(init_db, new_user, new_category, new_type):
     new_user.save()
     new_category.save()
     new_type.save()
-    return Property(owner_id=new_user.id,
+    return Property(user_id=new_user.id,
                     category_id=new_category.id,
                     type_id=new_type.id,
                     title='test property',
@@ -55,7 +55,7 @@ def unpublished_property(init_db, new_user, new_category, new_type):
     new_user.save()
     new_category.save()
     new_type.save()
-    return Property(owner_id=new_user.id,
+    return Property(user_id=new_user.id,
                     category_id=new_category.id,
                     type_id=new_type.id,
                     title='test property',

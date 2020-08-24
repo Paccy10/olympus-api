@@ -262,7 +262,7 @@ class UserPropertiesResource(Resource):
 
         user_id = request.decoded_token['user']['id']
         property_schema = PropertySchema(many=True)
-        condition = Property.owner_id == user_id
+        condition = Property.user_id == user_id
         properties, metadata = paginate_resource(
             Property, property_schema, condition)
         response = {

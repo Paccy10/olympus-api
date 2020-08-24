@@ -5,7 +5,7 @@ from flask import request
 from flask_restx import Resource
 
 from ..middlewares.token_required import token_required
-from ..middlewares.permission_required import (property_owner_permission_required,
+from ..middlewares.permission_required import (owner_permission_required,
                                                admin_permission_required)
 from ..utils.helpers import request_data_strip
 from ..utils.helpers import get_error_body
@@ -53,8 +53,8 @@ class PropertyResource(Resource):
             image_file = upload_image(image, '/olympus/properties')
             images.append(image_file)
 
-        owner_id = request.decoded_token['user']['id']
-        request_data['owner_id'] = owner_id
+        user_id = request.decoded_token['user']['id']
+        request_data['user_id'] = user_id
         request_data['images'] = images
         new_property = Property(**request_data)
         new_property.save()
@@ -104,7 +104,7 @@ class SinglePropertyResource(Resource):
         return Response.success(PROPERTY_FETCHED_MSG, response, 200)
 
     @token_required
-    @property_owner_permission_required
+    @owner_permission_required(Property, PROPERTY_NOT_FOUND_MSG, 'property_id')
     @property_namespace.expect(property_model)
     @property_namespace.doc(responses=get_responses(200, 400, 401, 403, 404))
     def put(self, property_id):
@@ -125,7 +125,7 @@ class SinglePropertyResource(Resource):
         return Response.success(PROPERTY_UPDATED_MSG, response, 200)
 
     @token_required
-    @property_owner_permission_required
+    @owner_permission_required(Property, PROPERTY_NOT_FOUND_MSG, 'property_id')
     @property_namespace.doc(responses=get_responses(200, 401, 403, 404))
     def delete(self, property_id):
         """ Endpoint to delete property """
@@ -172,7 +172,7 @@ class PublishPropertyResource(Resource):
     """" Resource class for publishing a property endpoint """
 
     @token_required
-    @property_owner_permission_required
+    @owner_permission_required(Property, PROPERTY_NOT_FOUND_MSG, 'property_id')
     @property_namespace.doc(responses=get_responses(200, 401, 403, 404))
     def patch(self, property_id):
         """ Endpoint to publish a property """
@@ -199,7 +199,7 @@ class UnpublishPropertyResource(Resource):
     """" Resource class for unpublishing a property endpoint """
 
     @token_required
-    @property_owner_permission_required
+    @owner_permission_required(Property, PROPERTY_NOT_FOUND_MSG, 'property_id')
     @property_namespace.doc(responses=get_responses(200, 401, 403, 404))
     def patch(self, property_id):
         """ Endpoint to unpublish a property """
